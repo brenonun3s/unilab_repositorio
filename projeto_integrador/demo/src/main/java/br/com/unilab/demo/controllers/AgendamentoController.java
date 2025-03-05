@@ -1,14 +1,12 @@
 package br.com.unilab.demo.controllers;
 
-import br.com.unilab.demo.entities.Agendamento;
+import br.com.unilab.demo.model.entities.Agendamento;
 import br.com.unilab.demo.repositories.AgendamentoRepository;
-import br.com.unilab.demo.service.AgendamentoService;
-import br.com.unilab.demo.service.UsuarioService;
+import br.com.unilab.demo.service.ProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -16,7 +14,7 @@ import java.util.Optional;
 public class AgendamentoController {
 
     @Autowired
-    UsuarioService usuarioService;
+    ProfessorService professorService;
 
     @Autowired
     AgendamentoService agendamentoService;
@@ -28,7 +26,7 @@ public class AgendamentoController {
     @PostMapping
     public ResponseEntity<Agendamento> efetuarAgendamento(@RequestBody Agendamento agendamento) {
         try {
-            usuarioService.solicitarAgendamento(agendamento);
+            professorService.solicitarAgendamento(agendamento);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
