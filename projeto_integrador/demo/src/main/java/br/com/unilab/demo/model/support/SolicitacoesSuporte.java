@@ -1,7 +1,5 @@
 package br.com.unilab.demo.model.support;
 
-import br.com.unilab.demo.model.entities.AudioVisual;
-
 public class SolicitacoesSuporte {
 
 

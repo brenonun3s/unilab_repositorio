@@ -37,8 +37,8 @@ public class Professor {
     @Column(name = "tipo_usuario", nullable = false)
     private TipoUsuario tipoUsuario = USUARIO;
 
-    @OneToMany(mappedBy = "usuario")
-    private List<Agendamento> agendamentos;
+    //@OneToMany(mappedBy = "usuario")
+    //private List<Agendamento> agendamentos;
 
 }
 

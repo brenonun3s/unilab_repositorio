@@ -11,25 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/usuarios")
-public class ProfessorController {
-
-    @Autowired
-    private ProfessorService professorService;
-
-    @PostMapping("/solicitar-agendamento")
-    public ResponseEntity<Agendamento> solicitarAgendamento(@RequestBody Agendamento agendamento) {
-        try {
-            professorService.solicitarAgendamento(agendamento);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
+public class ProfessorController{
 
     //ATUALIZAR AGENDAMNETO
 
     //CANCELAR AGENDAMENTO
 
+    //SOLICITAR AGENDAMENTO
 
     //METODO QUE BUSQUE APENAS O LABORATORIO COMO TRUE EM DISPONIVEL
 
