@@ -24,7 +24,7 @@ public class AdministradorController {
         throw new AgendamentoNaoLocalizadoException("Para deletar, é necessário que o agendamento esteja cadastrad");
     }
 
-    @PostMapping("/cadastrar-professor")
+    @PostMapping("/administrador/cadastrar-professor")
     public ResponseEntity<Professor> cadastrarProfessor(@RequestBody Professor professor) {
         try {
             administradorService.criarUsuario(professor);
@@ -34,7 +34,7 @@ public class AdministradorController {
         }
     }
 
-    @DeleteMapping("{/id}")
+    @DeleteMapping("/administrador/usuario{id}")
     public ResponseEntity<Professor> deletarUsuario(@PathVariable Long id, Professor professor) {
         try {
             administradorService.buscarProfessor(id);
@@ -50,7 +50,7 @@ public class AdministradorController {
         }
     }
 
-    @PutMapping("{/id}")
+    @PutMapping("/administrador/usuario{id}")
     public ResponseEntity<Professor> atualizarUsuario(@PathVariable Long id, @RequestBody Professor professor) {
         try {
             administradorService.buscarProfessor(id);
@@ -65,7 +65,7 @@ public class AdministradorController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/administrador/usuario")
     public ResponseEntity<Professor> listarProfessores() {
         try {
             administradorService.listarProfessores();
@@ -75,7 +75,7 @@ public class AdministradorController {
         }
     }
 
-    @PostMapping("/cadastrar-laboratorio")
+    @PostMapping("/administrador/cadastrar-laboratorio")
     public ResponseEntity<Laboratorio> cadastrarLaboratorio(@RequestBody Laboratorio laboratorio) {
         try {
             administradorService.criarLaboratorio(laboratorio);
@@ -85,7 +85,7 @@ public class AdministradorController {
         }
     }
 
-    @DeleteMapping("{/id}")
+    @DeleteMapping("/administrador/laboratorio/{id}")
     public ResponseEntity<Laboratorio> deletarLaboratorio(@PathVariable Long id, Laboratorio laboratorio) {
         try {
             administradorService.buscarLaboratorio(id);
@@ -101,7 +101,7 @@ public class AdministradorController {
         }
     }
 
-    @PutMapping("{/id}")
+    @PutMapping("/administrador/laboratorio/{id}")
     public ResponseEntity<Laboratorio> atualizarLaboratorio(@PathVariable Long id, Laboratorio laboratorio) {
         try {
             administradorService.buscarLaboratorio(id);
@@ -117,7 +117,7 @@ public class AdministradorController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/administrador/laboratorio")
     public ResponseEntity<Laboratorio> listarLaboratorios() {
         try {
             administradorService.listarLaboratorios();
@@ -137,7 +137,7 @@ public class AdministradorController {
         }
     }
 
-    @DeleteMapping("{/id}")
+    @DeleteMapping("administrador/agendamento/{id}")
     public ResponseEntity<Agendamento> deletarAgendamento(@PathVariable Long id, Agendamento agendamento) {
         try {
             administradorService.buscarAgendamento(id);
@@ -151,7 +151,7 @@ public class AdministradorController {
         }
     }
 
-    @PutMapping("{/id}")
+    @PutMapping("/administrador/agendamento/{id}")
     public ResponseEntity<Agendamento> atualizarAgendamento(@PathVariable Long id, Agendamento agendamento) {
         try {
             administradorService.buscarAgendamento(id);
@@ -166,7 +166,7 @@ public class AdministradorController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/administrador/agendamento")
     public ResponseEntity<Agendamento> listarAgendamentos() {
         try {
             administradorService.listarAgendamentos();
@@ -177,7 +177,3 @@ public class AdministradorController {
     }
 
 }
-
-
-
-
