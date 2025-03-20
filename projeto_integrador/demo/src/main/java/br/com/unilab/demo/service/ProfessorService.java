@@ -1,15 +1,23 @@
 package br.com.unilab.demo.service;
 
 import br.com.unilab.demo.model.entities.Agendamento;
-import br.com.unilab.demo.model.entities.Laboratorio;
 import br.com.unilab.demo.model.exceptions.AgendamentoNaoLocalizadoException;
 import br.com.unilab.demo.model.exceptions.LaboratorioOcupadoException;
-import br.com.unilab.demo.model.support.SolicitacoesSuporte;
 import br.com.unilab.demo.repositories.AgendamentoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+
+/**
+ * Classe Service que processa as funções do Professor
+ * @author -> Breno Nunes -> @github.com/brenonun3s
+ * @date 20/03/2025
+ */
 
 @Service
 @RequiredArgsConstructor
@@ -17,16 +25,18 @@ public class ProfessorService {
 
     private final AgendamentoRepository agendamentoRepository;
 
-    private final AudioVisualService audioVisualService;
-
-    public Agendamento solicitarAgendamento(Agendamento agendamento, Laboratorio laboratorio) {
-        if (!laboratorio.isStatusLaboratorio()) {
+    @Transactional
+    public Agendamento solicitarAgendamento(Agendamento agendamento) {
+        if (Objects.equals(agendamentoRepository.
+                findByDataAgendamentoAndAndHorario(), agendamento.getHorario()) ||
+                Objects.equals(agendamentoRepository.
+                        findByDataAgendamentoAndAndHorario(), agendamento.getData())) {
             throw new LaboratorioOcupadoException("Não é possível agendar! Laboratório ocupado!");
-        } else {
-            return agendamentoRepository.save(agendamento);
         }
+        return agendamentoRepository.save(agendamento);
     }
 
+    @Transactional
     public void deletarAgendamento(Agendamento agendamento) {
         if (agendamento.getId() == null) {
             throw new AgendamentoNaoLocalizadoException("Para excluir, é necessário que o Agendamento esteja cadastrado!");
@@ -34,6 +44,7 @@ public class ProfessorService {
         agendamentoRepository.delete(agendamento);
     }
 
+    @Transactional
     public Agendamento atualizarAgendamento(Agendamento agendamento) {
         if (agendamento.getId() == null) {
             throw new AgendamentoNaoLocalizadoException("Para atualizar, é necessário que o Agendamento esteja cadastrado!");
@@ -45,10 +56,30 @@ public class ProfessorService {
         return agendamentoRepository.findAll();
     }
 
-    //TODO: MELHORAR!
-    public void contatarAudioVisual() {
-        audioVisualService.contatarAudioVisual(new SolicitacoesSuporte());
-
+    public Optional<Agendamento> buscarAgendamento(UUID id) {
+        return agendamentoRepository.findById(id);
     }
+
+    @Transactional
+    public void atualizarAgendamento(Agendamento agendamentoExistente, Agendamento agendamentoAtualizacao) {
+        if (agendamentoExistente.getId() == null || agendamentoExistente.getNumerolaboratorio() == null) {
+            throw new IllegalArgumentException("Para atualizar, é necessário que o Agendamento esteja cadastrado na base!");
+        }
+
+        if (agendamentoAtualizacao.getProfessor() != null) {
+            agendamentoExistente.setProfessor(agendamentoAtualizacao.getProfessor());
+        }
+        if (agendamentoAtualizacao.getData() != null) {
+            agendamentoExistente.setData(agendamentoAtualizacao.getData());
+        }
+        if (agendamentoAtualizacao.getNumerolaboratorio() != null) {
+            agendamentoExistente.setNumerolaboratorio(agendamentoAtualizacao.getNumerolaboratorio());
+        }
+        if (agendamentoAtualizacao.getHorario() != null) {
+            agendamentoExistente.setHorario(agendamentoAtualizacao.getHorario());
+        }
+        agendamentoRepository.save(agendamentoExistente);
+    }
+
 
 }

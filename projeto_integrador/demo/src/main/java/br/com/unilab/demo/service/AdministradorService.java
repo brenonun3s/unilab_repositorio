@@ -1,14 +1,17 @@
 package br.com.unilab.demo.service;
 
 import br.com.unilab.demo.model.entities.Agendamento;
+import br.com.unilab.demo.model.entities.FerramentasDisponiveis;
 import br.com.unilab.demo.model.entities.Laboratorio;
 import br.com.unilab.demo.model.entities.Professor;
 import br.com.unilab.demo.model.exceptions.AgendamentoNaoLocalizadoException;
 import br.com.unilab.demo.model.exceptions.LaboratorioNaoLocalizadoException;
 import br.com.unilab.demo.repositories.AgendamentoRepository;
+import br.com.unilab.demo.repositories.FerramentasRepository;
 import br.com.unilab.demo.repositories.LaboratorioRepository;
 import br.com.unilab.demo.repositories.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,18 +20,24 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * @autor -> Dev Breno Nunes
+ * Classe Service que processa as funções do Administrador*
+ * @author -> Breno Nunes -> @github.com/brenonun3s
+ * @date 20/03/2025
  */
-
-@RequiredArgsConstructor
 @Service
 public class AdministradorService {
 
-    private final AgendamentoRepository agendamentoRepository;
+    @Autowired
+    AgendamentoRepository agendamentoRepository;
 
-    private final LaboratorioRepository laboratorioRepository;
+    @Autowired
+    LaboratorioRepository laboratorioRepository;
 
-    private final ProfessorRepository professorRepository;
+    @Autowired
+    ProfessorRepository professorRepository;
+
+    @Autowired
+    private FerramentasRepository ferramentasRepository;
 
     // CRUD LABORATÓRIO
 
@@ -131,8 +140,8 @@ public class AdministradorService {
         if (professorAtualizacao.getSenha() != null) {
             professorExistente.setSenha(professorAtualizacao.getSenha());
         }
-        if (professorAtualizacao.getLogin() != null) {
-            professorExistente.setLogin(professorAtualizacao.getLogin());
+        if (professorAtualizacao.getMatricula() != null) {
+            professorExistente.setMatricula(professorAtualizacao.getMatricula());
         }
         if (professorAtualizacao.getEmail() != null) {
             professorExistente.setEmail(professorAtualizacao.getEmail());
@@ -148,6 +157,19 @@ public class AdministradorService {
     public Optional<Professor> buscarProfessor(UUID id) {
         return professorRepository.findById(id);
 
+    }
+
+    @Transactional
+    public FerramentasDisponiveis salvar (FerramentasDisponiveis ferramentasDisponiveis) {
+        return ferramentasRepository.save(ferramentasDisponiveis);
+    }
+
+    @Transactional
+    public void deletarFerramenta(FerramentasDisponiveis ferramentasDisponiveis) {
+        if (ferramentasDisponiveis.getId() == null || ferramentasDisponiveis.getNome() == null) {
+            throw new IllegalArgumentException("Para excluir, é necessário que a Ferramenta esteja cadastrado!");
+        }
+        ferramentasRepository.delete(ferramentasDisponiveis);
     }
 
 

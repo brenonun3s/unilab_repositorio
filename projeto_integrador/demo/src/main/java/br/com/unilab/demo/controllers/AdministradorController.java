@@ -6,21 +6,38 @@ import br.com.unilab.demo.model.entities.Professor;
 import br.com.unilab.demo.model.exceptions.AgendamentoNaoLocalizadoException;
 import br.com.unilab.demo.model.exceptions.LaboratorioNaoLocalizadoException;
 import br.com.unilab.demo.service.AdministradorService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
-@RestController
-@RequiredArgsConstructor
+/**
+ * Classe Controller dos ADM do sistema
+ *
+ * @author -> Breno Nunes -> @github.com/brenonun3s
+ * @date 20/03/2025
+ */
+
+
+@Controller
 @RequestMapping("/administrador")
 public class AdministradorController {
 
-    private final AdministradorService administradorService;
+    @Autowired
+    AdministradorService administradorService;
+
+    @GetMapping("/login")
+    public String loginAdmin() {
+        return "telaDeLoginAdministrador";
+    }
+
 
     //OK
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/cadastrar-professor")
     public ResponseEntity<Professor> cadastrarProfessor(@RequestBody Professor professor) {
         try {
@@ -32,6 +49,7 @@ public class AdministradorController {
     }
 
     //OK
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/deletar-professor/{id}")
     public ResponseEntity<Object> deletarUsuario(@PathVariable("id") String id) {
         return administradorService.buscarProfessor(UUID.fromString(id))
@@ -43,6 +61,7 @@ public class AdministradorController {
     }
 
     //OK
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/atualizar-professor/{id}")
     public ResponseEntity<Object> atualizarUsuario(@PathVariable("id") String id, @RequestBody Professor professor) {
         return administradorService.buscarProfessor(UUID.fromString(id))
@@ -53,7 +72,6 @@ public class AdministradorController {
 
     }
 
-    //OK
     @GetMapping("/listar-professores")
     public ResponseEntity<List<Professor>> listarProfessores() {
         try {
@@ -67,7 +85,8 @@ public class AdministradorController {
         }
     }
 
-    //OK
+   //OK
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/cadastrar-laboratorio")
     public ResponseEntity<Laboratorio> cadastrarLaboratorio(@RequestBody Laboratorio laboratorio) {
         try {
@@ -79,6 +98,7 @@ public class AdministradorController {
     }
 
     //OK
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/deletar-laboratorio/{id}")
     public ResponseEntity<Object> deletarLaboratorio(@PathVariable("id") String id) {
         return administradorService.buscarLaboratorio(UUID.fromString(id))
@@ -102,18 +122,18 @@ public class AdministradorController {
     //OK
     @GetMapping("/listar-laboratorios")
     public ResponseEntity<List<Laboratorio>> listarLaboratorios() {
-            try {
-                List<Laboratorio> laboratorios = administradorService.listarLaboratorios();
-                if (laboratorios.isEmpty()) {
-                    throw new LaboratorioNaoLocalizadoException("Não possui laboratórios cadastrados!");
-                }
-                return ResponseEntity.ok(laboratorios);
-            } catch (Exception e) {
-                throw new RuntimeException("Erro Inesperado! Gentileza contatar o suporte!");
+        try {
+            List<Laboratorio> laboratorios = administradorService.listarLaboratorios();
+            if (laboratorios.isEmpty()) {
+                throw new LaboratorioNaoLocalizadoException("Não possui laboratórios cadastrados!");
             }
+            return ResponseEntity.ok(laboratorios);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro Inesperado! Gentileza contatar o suporte!");
         }
+    }
 
-
+    // TESTAR ROTA!!!
     @PostMapping("/novo-agendamento")
     public ResponseEntity<Agendamento> criarNovoAgendamento(@RequestBody Agendamento agendamento) {
         try {
@@ -162,5 +182,6 @@ public class AdministradorController {
             throw new RuntimeException("Erro Inesperado! Gentileza contatar o suporte!");
         }
     }
+
 
 }
