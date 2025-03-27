@@ -39,4 +39,7 @@ public class Agendamento implements Serializable {
 
     @Column(name = "numero_laboratorio")
     private Integer numerolaboratorio;
+
+    @Column
+    private Boolean status;
 }

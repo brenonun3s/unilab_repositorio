@@ -1,75 +1,70 @@
 package br.com.unilab.demo.controllers;
 
 import br.com.unilab.demo.model.entities.Agendamento;
-import br.com.unilab.demo.repositories.AgendamentoRepository;
-import br.com.unilab.demo.service.ProfessorService;
+import br.com.unilab.demo.model.entities.Laboratorio;
+import br.com.unilab.demo.model.exceptions.AgendamentoNaoLocalizadoException;
+import br.com.unilab.demo.model.exceptions.LaboratorioNaoLocalizadoException;
+import br.com.unilab.demo.service.AgendamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.UUID;
 
-@RestController
-@RequestMapping("/agendamentos")
+@Controller
 public class AgendamentoController {
-
-    @Autowired
-    ProfessorService professorService;
 
     @Autowired
     AgendamentoService agendamentoService;
 
-    @Autowired
-    AgendamentoRepository agendamentoRepository;
-
-    //TODO: MELHORAR METODO, NAO ESTA SALVANDO DADOS, APENAS ID
-    @PostMapping
-    public ResponseEntity<Agendamento> efetuarAgendamento(@RequestBody Agendamento agendamento) {
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/solicitar-agendamento")
+    public ResponseEntity<Agendamento> solicitar(@RequestBody Agendamento agendamento) {
         try {
-            professorService.solicitarAgendamento(agendamento);
+            agendamentoService.solicitarAgendamento(agendamento);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
-    //TODO: TESTAR MÉTODO, AINDA NAO TESTADO
-    @PutMapping("{id}")
-    public ResponseEntity<Void> atualizarAgendamento(@PathVariable Long id, @RequestBody Agendamento agendamento) {
-        Optional<Agendamento> agendamentoOptional = agendamentoService.obterPorId(id);
+    //OK
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/deletar-agendamento/{id}")
+    public ResponseEntity<Object> deletarAgendamento(@PathVariable("id") String id) {
+        return agendamentoService.buscarAgendamento(UUID.fromString(id))
+                .map(agendamento -> {
+                    agendamentoService.deletarAgendamento(agendamento);
+                    return ResponseEntity.noContent().build();
+                }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
-        if (agendamentoOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
+    //OK
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/atualizar-agendamento/{id}")
+    public ResponseEntity<Object> atualizarAgendamento(@PathVariable("id") String id, @RequestBody Agendamento agendamento) {
+        return agendamentoService.buscarAgendamento(UUID.fromString(id))
+                .map(agendamentoExistente -> {
+                    agendamentoService.atualizarAgendamento(agendamentoExistente, agendamento);
+                    return ResponseEntity.noContent().build();
+                }).orElseGet(() -> ResponseEntity.notFound().build());
+
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/listar-agendamentos")
+    public ResponseEntity<List<Agendamento>> listarAgendamentos() {
+        try {
+            List<Agendamento> agendamentos = agendamentoService.listarAgendamentos();
+            if (agendamentos.isEmpty()) {
+                throw new AgendamentoNaoLocalizadoException("Não possui laboratórios cadastrados!");
+            }
+            return ResponseEntity.ok(agendamentos);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro Inesperado! Gentileza contatar o suporte!");
         }
-
-        agendamento.setNumeroLaboratorio(agendamentoOptional.get().getNumeroLaboratorio());
-        agendamento.setDataAgendamento(agendamentoOptional.get().getDataAgendamento());
-        agendamento.setUsuarioAgendado(agendamentoOptional.get().getUsuarioAgendado());
-
-        agendamentoRepository.save(agendamento);
-
-        return ResponseEntity.ok().build();
     }
-
-    //TODO: TESTAR MÉTODO, AINDA NAO TESTADO
-    @DeleteMapping({"{id}"})
-    public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
-        Optional<Agendamento> agendamentoOptional = agendamentoService.obterPorId(id);
-        if (agendamentoOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        agendamentoRepository.delete(agendamentoOptional.get());
-        return ResponseEntity.noContent().build();
-    }
-
-    //TODO: TESTAR MÉTODO, AINDA NAO TESTADO
-    @GetMapping
-    public ResponseEntity<Void> listar() {
-        agendamentoService.buscarTodosAgendamentos();
-        return ResponseEntity.ok().build();
-    }
-
-
-
-
-    }
+}

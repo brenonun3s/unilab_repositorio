@@ -36,8 +36,8 @@ public class Professor implements Serializable {
     @Column(name = "senha", nullable = false, length = 20)
     private String senha;
 
-    @Column(name = "ativo", nullable = false)
-    private Boolean ativo;
+    @Column(name = "status", nullable = false)
+    private Boolean status;
 
     @Column(name = "matricula_professor")
     private String matricula;

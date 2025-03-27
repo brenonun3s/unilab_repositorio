@@ -6,10 +6,13 @@ import br.com.unilab.demo.model.entities.Professor;
 import br.com.unilab.demo.model.exceptions.AgendamentoNaoLocalizadoException;
 import br.com.unilab.demo.model.exceptions.LaboratorioNaoLocalizadoException;
 import br.com.unilab.demo.service.AdministradorService;
+import br.com.unilab.demo.service.LaboratorioService;
+import br.com.unilab.demo.service.ProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,159 +31,51 @@ import java.util.UUID;
 public class AdministradorController {
 
     @Autowired
-    AdministradorService administradorService;
+    private ProfessorService professorService;
+
+    @Autowired
+    private LaboratorioService laboratorioService;
 
     @GetMapping("/login")
     public String loginAdmin() {
         return "telaDeLoginAdministrador";
     }
 
-
-    //OK
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/cadastrar-professor")
-    public ResponseEntity<Professor> cadastrarProfessor(@RequestBody Professor professor) {
-        try {
-            administradorService.criarUsuario(professor);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    @GetMapping("/gerenciar-professores")
+    public String gerenciarProfessores(Model model) {
+        return "administradorGerenciarProfessores";
     }
 
-    //OK
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/deletar-professor/{id}")
-    public ResponseEntity<Object> deletarUsuario(@PathVariable("id") String id) {
-        return administradorService.buscarProfessor(UUID.fromString(id))
-                .map(professor -> {
-                    administradorService.deletarUsuario(professor);
-                    return ResponseEntity.noContent().build();
-                }).orElseGet(() -> ResponseEntity.notFound().build());
-
+    @GetMapping("/listar")
+    public String listarProfessores(Model model) {
+        List<Professor> professores = professorService.listarProfessores();
+        model.addAttribute("professores", professores);
+        return "administradorGerenciarProfessores";
     }
 
-    //OK
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/atualizar-professor/{id}")
-    public ResponseEntity<Object> atualizarUsuario(@PathVariable("id") String id, @RequestBody Professor professor) {
-        return administradorService.buscarProfessor(UUID.fromString(id))
-                .map(professorExistente -> {
-                    administradorService.atualizarUsuario(professorExistente, professor);
-                    return ResponseEntity.noContent().build();
-                }).orElseGet(() -> ResponseEntity.notFound().build());
-
+    @GetMapping("/novo-laboratorio")
+    public String novoLaboratorio(Model model) {
+        model.addAttribute("laboratorio", new Laboratorio());
+        return "administradorGerenciarLaboratorios";
     }
 
-    @GetMapping("/listar-professores")
-    public ResponseEntity<List<Professor>> listarProfessores() {
-        try {
-            List<Professor> professores = administradorService.listarProfessores();
-            if (professores.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.ok(professores);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro Inesperado! Gentileza contatar o suporte!");
-        }
+    @GetMapping("/novo-professor")
+    public String novoProfessor(Model model) {
+        model.addAttribute("professor", new Professor());
+        return "administradorGerenciarProfessores";
     }
 
-   //OK
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/cadastrar-laboratorio")
-    public ResponseEntity<Laboratorio> cadastrarLaboratorio(@RequestBody Laboratorio laboratorio) {
-        try {
-            administradorService.criarLaboratorio(laboratorio);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    @GetMapping("/listar-todos-agendamentos")
+    public String listarAgendamentos(Model model) {
+        List<Laboratorio> laboratorios = laboratorioService.listarLaboratorios();
+        model.addAttribute("laboratorios", laboratorios);
+        return "administradorGerenciarLaboratorios";
     }
 
-    //OK
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/deletar-laboratorio/{id}")
-    public ResponseEntity<Object> deletarLaboratorio(@PathVariable("id") String id) {
-        return administradorService.buscarLaboratorio(UUID.fromString(id))
-                .map(laboratorio -> {
-                    administradorService.deletarLaboratorio(laboratorio);
-                    return ResponseEntity.noContent().build();
-                }).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    //OK
-    @PutMapping("/atualizar-laboratorio/{id}")
-    public ResponseEntity<Object> atualizarLaboratorio(@PathVariable("id") String id, @RequestBody Laboratorio laboratorio) {
-        return administradorService.buscarLaboratorio(UUID.fromString(id))
-                .map(laboratorioExistente -> {
-                    administradorService.atualizarLaboratorio(laboratorioExistente, laboratorio);
-                    return ResponseEntity.noContent().build();
-                }).orElseGet(() -> ResponseEntity.notFound().build());
-
-    }
-
-    //OK
-    @GetMapping("/listar-laboratorios")
-    public ResponseEntity<List<Laboratorio>> listarLaboratorios() {
-        try {
-            List<Laboratorio> laboratorios = administradorService.listarLaboratorios();
-            if (laboratorios.isEmpty()) {
-                throw new LaboratorioNaoLocalizadoException("Não possui laboratórios cadastrados!");
-            }
-            return ResponseEntity.ok(laboratorios);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro Inesperado! Gentileza contatar o suporte!");
-        }
-    }
-
-    // TESTAR ROTA!!!
-    @PostMapping("/novo-agendamento")
-    public ResponseEntity<Agendamento> criarNovoAgendamento(@RequestBody Agendamento agendamento) {
-        try {
-            administradorService.criarAgendamento(agendamento);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @DeleteMapping("/deletar-agendamento/{id}")
-    public ResponseEntity<Agendamento> deletarAgendamento(@PathVariable UUID id, Agendamento agendamento) {
-        try {
-            administradorService.buscarAgendamento(id);
-            if (agendamento.getId() == null) {
-                throw new AgendamentoNaoLocalizadoException("Não localizado");
-            }
-            administradorService.deletarAgendamento(agendamento);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @PutMapping("/atualizar-agendamento/{id}")
-    public ResponseEntity<Agendamento> atualizarAgendamento(@PathVariable UUID id, Agendamento agendamento) {
-        try {
-            administradorService.buscarAgendamento(id);
-            if (agendamento.getId() == null) {
-                throw new RuntimeException("Não localizado");
-            }
-            administradorService.atualizarAgendamento(agendamento);
-            return ResponseEntity.ok().build();
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @GetMapping("/listar-agendamentos")
-    public ResponseEntity<Agendamento> listarAgendamentos() {
-        try {
-            administradorService.listarAgendamentos();
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            throw new RuntimeException("Erro Inesperado! Gentileza contatar o suporte!");
-        }
+    @GetMapping("/novo-agendamento")
+    public String novoAgendamento(Model model) {
+        model.addAttribute("agendamento", new Agendamento());
+        return "agendamento_lab";
     }
 
 

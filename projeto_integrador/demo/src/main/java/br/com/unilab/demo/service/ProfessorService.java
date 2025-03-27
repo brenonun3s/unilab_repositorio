@@ -1,10 +1,13 @@
 package br.com.unilab.demo.service;
 
 import br.com.unilab.demo.model.entities.Agendamento;
+import br.com.unilab.demo.model.entities.Professor;
 import br.com.unilab.demo.model.exceptions.AgendamentoNaoLocalizadoException;
 import br.com.unilab.demo.model.exceptions.LaboratorioOcupadoException;
 import br.com.unilab.demo.repositories.AgendamentoRepository;
+import br.com.unilab.demo.repositories.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,66 +23,58 @@ import java.util.UUID;
  */
 
 @Service
-@RequiredArgsConstructor
 public class ProfessorService {
 
-    private final AgendamentoRepository agendamentoRepository;
+    @Autowired
+    private ProfessorRepository professorRepository;
+
+    // CRUD PROFESSOR
 
     @Transactional
-    public Agendamento solicitarAgendamento(Agendamento agendamento) {
-        if (Objects.equals(agendamentoRepository.
-                findByDataAgendamentoAndAndHorario(), agendamento.getHorario()) ||
-                Objects.equals(agendamentoRepository.
-                        findByDataAgendamentoAndAndHorario(), agendamento.getData())) {
-            throw new LaboratorioOcupadoException("Não é possível agendar! Laboratório ocupado!");
-        }
-        return agendamentoRepository.save(agendamento);
+    public Professor criarProfessor(Professor professor) {
+        return professorRepository.save(professor);
     }
 
     @Transactional
-    public void deletarAgendamento(Agendamento agendamento) {
-        if (agendamento.getId() == null) {
-            throw new AgendamentoNaoLocalizadoException("Para excluir, é necessário que o Agendamento esteja cadastrado!");
+    public void deletarProfessor(Professor professor) {
+        if (professor.getId() == null || professor.getNome() == null) {
+            throw new IllegalArgumentException("Para excluir, é necessário que o Usuário esteja cadastrado!");
         }
-        agendamentoRepository.delete(agendamento);
+        professorRepository.delete(professor);
     }
 
     @Transactional
-    public Agendamento atualizarAgendamento(Agendamento agendamento) {
-        if (agendamento.getId() == null) {
-            throw new AgendamentoNaoLocalizadoException("Para atualizar, é necessário que o Agendamento esteja cadastrado!");
-        }
-        return agendamentoRepository.save(agendamento);
-    }
-
-    public List<Agendamento> listarAgendamentos() {
-        return agendamentoRepository.findAll();
-    }
-
-    public Optional<Agendamento> buscarAgendamento(UUID id) {
-        return agendamentoRepository.findById(id);
-    }
-
-    @Transactional
-    public void atualizarAgendamento(Agendamento agendamentoExistente, Agendamento agendamentoAtualizacao) {
-        if (agendamentoExistente.getId() == null || agendamentoExistente.getNumerolaboratorio() == null) {
-            throw new IllegalArgumentException("Para atualizar, é necessário que o Agendamento esteja cadastrado na base!");
+    public void atualizarProfessor(Professor professorExistente, Professor professorAtualizacao) {
+        if (professorExistente.getId() == null || professorExistente.getNome() == null) {
+            throw new IllegalArgumentException("Para atualizar, é necessário que o Usuário esteja cadastrado!");
         }
 
-        if (agendamentoAtualizacao.getProfessor() != null) {
-            agendamentoExistente.setProfessor(agendamentoAtualizacao.getProfessor());
+        if (professorAtualizacao.getNome() != null) {
+            professorExistente.setNome(professorAtualizacao.getNome());
         }
-        if (agendamentoAtualizacao.getData() != null) {
-            agendamentoExistente.setData(agendamentoAtualizacao.getData());
+        if (professorAtualizacao.getSenha() != null) {
+            professorExistente.setSenha(professorAtualizacao.getSenha());
         }
-        if (agendamentoAtualizacao.getNumerolaboratorio() != null) {
-            agendamentoExistente.setNumerolaboratorio(agendamentoAtualizacao.getNumerolaboratorio());
+        if (professorAtualizacao.getMatricula() != null) {
+            professorExistente.setMatricula(professorAtualizacao.getMatricula());
         }
-        if (agendamentoAtualizacao.getHorario() != null) {
-            agendamentoExistente.setHorario(agendamentoAtualizacao.getHorario());
+        if (professorAtualizacao.getEmail() != null) {
+            professorExistente.setEmail(professorAtualizacao.getEmail());
         }
-        agendamentoRepository.save(agendamentoExistente);
+
+        professorRepository.save(professorExistente);
     }
+
+    public List<Professor> listarProfessores() {
+        return professorRepository.findAll();
+    }
+
+    public Optional<Professor> buscarProfessor(UUID id) {
+        return professorRepository.findById(id);
+
+    }
+
+
 
 
 }

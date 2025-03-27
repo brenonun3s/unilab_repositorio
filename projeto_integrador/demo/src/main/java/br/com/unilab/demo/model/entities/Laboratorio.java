@@ -36,13 +36,6 @@ public class Laboratorio implements Serializable {
     @Column(name = "departamento_laboratorio")
     private String departamentoLaboratorio;
 
-    @Type(ListArrayType.class)
-    @Column(name = "ferramentas_disponiveis", columnDefinition = "varchar[]")
-    private List<FerramentasDisponiveis> ferramentasDisponiveis;
-
-    @Column(name = "quantidade_notebooks")
-    private Integer quantidadeNotebooks;
-
     @Column(name = "localizacao_lab")
     private String localizacao;
 

@@ -1,17 +1,23 @@
 package br.com.unilab.demo.controllers;
 
 import br.com.unilab.demo.model.entities.Agendamento;
+import br.com.unilab.demo.model.entities.Laboratorio;
+import br.com.unilab.demo.model.entities.Professor;
+import br.com.unilab.demo.service.AgendamentoService;
+import br.com.unilab.demo.service.LaboratorioService;
 import br.com.unilab.demo.service.ProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
- * Classe Controller dos Professor do sistema
+ * Classe Controller dos Professores do sistema
  *
  * @author -> Breno Nunes -> @github.com/brenonun3s
  * @date 20/03/2025
@@ -24,17 +30,35 @@ public class ProfessorController {
     @Autowired
     private ProfessorService professorService;
 
+    @Autowired
+    private AgendamentoService agendamentoService;
+
     @GetMapping("/login")
     public String loginProf() {
         return "telaDeLoginProfessor";
     }
 
-    //TESTAR ROTA
+    @GetMapping("/listar-todos-agendamentos")
+    public String listarAgendamentos(Model model) {
+        List<Agendamento> agendamentos = agendamentoService.listarAgendamentos();
+        model.addAttribute("agendamentos", agendamentos);
+        return "historicoAgendamentos";
+    }
+
+    @GetMapping("/novo-agendamento")
+    public String novoAgendamento(Model model) {
+        model.addAttribute("agendamento", new Agendamento());
+        return "agendamento_lab";
+    }
+
+    //CRUD PROFESSORES ----------
+
+    //OK
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/solicitar-agendamento")
-    public ResponseEntity<Agendamento> solicitar(@RequestBody Agendamento agendamento) {
+    @PostMapping("/cadastrar-professor")
+    public ResponseEntity<Professor> cadastrarProfessor(@RequestBody Professor professor) {
         try {
-            professorService.solicitarAgendamento(agendamento);
+            professorService.criarProfessor(professor);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -43,27 +67,43 @@ public class ProfessorController {
 
     //OK
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/deletar-agendamento/{id}")
-    public ResponseEntity<Object> deletarAgendamento(@PathVariable("id") String id) {
-        return professorService.buscarAgendamento(UUID.fromString(id))
-                .map(agendamento -> {
-                    professorService.deletarAgendamento(agendamento);
+    @DeleteMapping("/deletar-professor/{id}")
+    public ResponseEntity<Object> deletarUsuario(@PathVariable("id") String id) {
+        return professorService.buscarProfessor(UUID.fromString(id))
+                .map(professor -> {
+                    professorService.deletarProfessor(professor);
                     return ResponseEntity.noContent().build();
                 }).orElseGet(() -> ResponseEntity.notFound().build());
+
     }
 
     //OK
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/atualizar-agendamento/{id}")
-    public ResponseEntity<Object> atualizarAgendamento(@PathVariable("id") String id, @RequestBody Agendamento agendamento) {
-        return professorService.buscarAgendamento(UUID.fromString(id))
-                .map(agendamentoExistente -> {
-                    professorService.atualizarAgendamento(agendamentoExistente, agendamento);
+    @PutMapping("/atualizar-professor/{id}")
+    public ResponseEntity<Object> atualizarUsuario(@PathVariable("id") String id, @RequestBody Professor professor) {
+        return professorService.buscarProfessor(UUID.fromString(id))
+                .map(professorExistente -> {
+                    professorService.atualizarProfessor(professorExistente, professor);
                     return ResponseEntity.noContent().build();
                 }).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
 
-
+    @GetMapping("/listar-professores")
+    public ResponseEntity<List<Professor>> listarProfessores() {
+        try {
+            List<Professor> professores = professorService.listarProfessores();
+            if (professores.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(professores);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro Inesperado! Gentileza contatar o suporte!");
+        }
+    }
 }
+
+
+
+
 
