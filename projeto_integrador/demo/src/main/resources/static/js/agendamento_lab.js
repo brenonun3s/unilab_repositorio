@@ -5,29 +5,31 @@ let labGlobal = null;
 // Função para carregar a lista de professores
 function carregarProfessores() {
     console.log('Carregando lista de professores...');
-    const professores = JSON.parse(localStorage.getItem("professores")) || [];
     
-    if (professores.length === 0) {
-        console.log('Nenhum professor encontrado');
-        mostrarMensagem('Nenhum professor cadastrado no sistema.', 'warning');
-        return;
-    }
-    
-    const selectProfessor = document.getElementById("nomeProfessor");
-    // Mantém apenas a primeira opção (placeholder)
-    selectProfessor.innerHTML = '<option value="">Selecione um professor</option>';
-    
-    // Ordena os professores por nome
-    professores.sort((a, b) => a.nome.localeCompare(b.nome));
-    
-    professores.forEach(professor => {
-        const option = document.createElement("option");
-        option.value = professor.nome;
-        option.textContent = professor.nome;
-        selectProfessor.appendChild(option);
-    });
-    
-    console.log(`${professores.length} professores carregados`);
+    // Fazer requisição para o backend
+    fetch('/api/professores')
+        .then(response => response.json())
+        .then(professores => {
+            const selectProfessor = document.getElementById("nomeProfessor");
+            // Mantém apenas a primeira opção (placeholder)
+            selectProfessor.innerHTML = '<option value="">Selecione um professor</option>';
+            
+            // Ordena os professores por nome
+            professores.sort((a, b) => a.nome.localeCompare(b.nome));
+            
+            professores.forEach(professor => {
+                const option = document.createElement("option");
+                option.value = professor.nome;
+                option.textContent = professor.nome;
+                selectProfessor.appendChild(option);
+            });
+            
+            console.log(`${professores.length} professores carregados`);
+        })
+        .catch(error => {
+            console.error('Erro ao carregar professores:', error);
+            mostrarMensagem('Erro ao carregar lista de professores.', 'danger');
+        });
 }
 
 // Função para formatar a data (de yyyy-mm-dd para dd/mm/yyyy)
@@ -36,31 +38,47 @@ function formatarData(data) {
     return `${dia}/${mes}/${ano}`;
 }
 
-// Carrega os dados do laboratório a partir do localStorage
+// Carrega os dados do laboratório a partir do backend
 function carregarDados() {
     console.log('Iniciando carregamento de dados...');
-    const laboratorios = JSON.parse(localStorage.getItem("laboratorios")) || [];
     
-    if (laboratorios.length === 0) {
-        console.log('Nenhum laboratório encontrado');
-        mostrarMensagem('Nenhum laboratório cadastrado no sistema.', 'warning');
-        return;
-    }
-    
-    // Carregar o primeiro laboratório por padrão
-    window.labAtual = 0;
-    labGlobal = laboratorios[0];
-    agendamentos = JSON.parse(localStorage.getItem(`lab0_agendamentos`)) || [];
-    
-    console.log('Laboratório carregado:', labGlobal);
-    
-    // Carregar professores
-    carregarProfessores();
-    
-    // Primeiro atualizar o status
-    atualizarStatus();
-    // Depois carregar as ferramentas
-    carregarFerramentasLaboratorio(0);
+    // Fazer requisição para o backend
+    fetch('/api/laboratorios')
+        .then(response => response.json())
+        .then(laboratorios => {
+            if (laboratorios.length === 0) {
+                console.log('Nenhum laboratório encontrado');
+                mostrarMensagem('Nenhum laboratório cadastrado no sistema.', 'warning');
+                return;
+            }
+            
+            // Carregar o primeiro laboratório por padrão
+            window.labAtual = 0;
+            labGlobal = laboratorios[0];
+            
+            // Carregar agendamentos do laboratório atual
+            fetch(`/api/agendamentos/${labGlobal.id}`)
+                .then(response => response.json())
+                .then(agendamentosBackend => {
+                    agendamentos = agendamentosBackend;
+                    
+                    // Carregar professores
+                    carregarProfessores();
+                    
+                    // Primeiro atualizar o status
+                    atualizarStatus();
+                    // Depois carregar as ferramentas
+                    carregarFerramentasLaboratorio(0);
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar agendamentos:', error);
+                    mostrarMensagem('Erro ao carregar agendamentos.', 'danger');
+                });
+        })
+        .catch(error => {
+            console.error('Erro ao carregar laboratórios:', error);
+            mostrarMensagem('Erro ao carregar laboratórios.', 'danger');
+        });
 }
 
 // Salva os agendamentos do laboratório atual no localStorage
@@ -342,58 +360,34 @@ async function reservar(horario) {
         return;
     }
     
-    if (dataSelecionada.toDateString() === dataAtual.toDateString() && dataAtual.getHours() >= 18) {
-        mostrarMensagem("Não é permitido realizar agendamentos após as 18h deste dia.", "danger");
-        return;
-    }
+    const novoAgendamento = {
+        laboratorio: labGlobal.nome,
+        professor: nomeProfessor,
+        data: dataAgendamento,
+        horario: horario
+    };
     
-    const bookingsForDate = agendamentos.filter(agendamento => agendamento.data === dataAgendamento);
-    if (bookingsForDate.length > 0) {
-        if (horario === "19:00 às 20:20 e 20:50 às 22:00") {
-            mostrarMensagem("Não é possível marcar ambos os horários, pois já há agendamentos para essa data.", "danger");
-            return;
-        } else if (horario === "19:00 às 20:20" && bookingsForDate.some(b => b.horario === "19:00 às 20:20" || b.horario === "19:00 às 20:20 e 20:50 às 22:00")) {
-            mostrarMensagem("O horário 19:00 às 20:20 já está reservado para essa data.", "danger");
-            return;
-        } else if (horario === "20:50 às 22:00" && bookingsForDate.some(b => b.horario === "20:50 às 22:00" || b.horario === "19:00 às 20:20 e 20:50 às 22:00")) {
-            mostrarMensagem("O horário 20:50 às 22:00 já está reservado para essa data.", "danger");
-            return;
+    try {
+        const response = await fetch('/api/agendamentos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(novoAgendamento)
+        });
+        
+        if (response.ok) {
+            const agendamentoSalvo = await response.json();
+            agendamentos.push(agendamentoSalvo);
+            mostrarMensagem(`Reserva confirmada!\nProfessor: ${nomeProfessor}\nData: ${formatarData(dataAgendamento)}\nHorário: ${horario}`, "success");
+            atualizarStatus();
+            showConfirmAgendamento();
+        } else {
+            throw new Error('Erro ao salvar agendamento');
         }
-    }
-    
-    const agendamentosPorProfessor = agendamentos.filter(
-        agendamento => agendamento.professor === nomeProfessor && agendamento.data === dataAgendamento
-    );
-    
-    if (agendamentosPorProfessor.length >= 3) {
-        mostrarMensagem("Você atingiu o limite de 3 agendamentos para esse dia.", "danger");
-        return;
-    }
-    
-    const senhaInput = prompt("Digite a senha do administrador:");
-    if (senhaInput === senhaAdministrador) {
-        const novoAgendamento = { 
-            laboratorio: labGlobal.nome,
-            professor: nomeProfessor,
-            data: dataAgendamento, 
-            horario 
-        };
-        
-        agendamentos.push(novoAgendamento);
-        salvarAgendamentos();
-        
-        // Integração: Adiciona ao histórico e gera notificação
-        adicionarAoHistorico(novoAgendamento);
-        adicionarNotificacao(
-            "Novo Agendamento",
-            `Professor ${nomeProfessor} agendou o laboratório ${labGlobal.nome} para ${formatarData(dataAgendamento)} no horário ${horario}.`
-        );
-        
-        mostrarMensagem(`Reserva confirmada!\nProfessor: ${nomeProfessor}\nData: ${formatarData(dataAgendamento)}\nHorário: ${horario}`, "success");
-        atualizarStatus();
-        showConfirmAgendamento();
-    } else {
-        mostrarMensagem("Senha incorreta. A reserva não foi realizada.", "danger");
+    } catch (error) {
+        console.error('Erro ao realizar agendamento:', error);
+        mostrarMensagem("Erro ao realizar o agendamento. Tente novamente.", "danger");
     }
 }
 
@@ -427,12 +421,6 @@ function abrirModalCancelamento() {
 
 // Função para cancelar agendamentos selecionados
 async function cancelarAgendamentosSelecionados() {
-    const senhaInput = prompt("Digite a senha do administrador para cancelar os agendamentos:");
-    if (senhaInput !== senhaAdministrador) {
-        mostrarMensagem("Senha incorreta. Não foi possível cancelar os agendamentos.", "danger");
-        return;
-    }
-    
     const checkboxes = document.querySelectorAll("#modalBody .form-check-input:checked");
     if (checkboxes.length === 0) {
         mostrarMensagem("Nenhum agendamento selecionado.", "warning");
@@ -443,21 +431,29 @@ async function cancelarAgendamentosSelecionados() {
         .map(cb => parseInt(cb.value))
         .sort((a, b) => b - a);
     
-    indices.forEach(index => {
-        const agendamentoCancelado = agendamentos[index];
-        adicionarNotificacao(
-            "Cancelamento de Agendamento",
-            `Agendamento cancelado: ${formatarData(agendamentoCancelado.data)} - ${agendamentoCancelado.horario} - Professor ${agendamentoCancelado.professor}`
-        );
-        agendamentos.splice(index, 1);
-    });
-    
-    salvarAgendamentos();
-    mostrarMensagem("Agendamentos selecionados foram cancelados com sucesso.", "success");
-    
-    const modal = bootstrap.Modal.getInstance(document.getElementById("cancelModal"));
-    modal.hide();
-    atualizarStatus();
+    try {
+        for (const index of indices) {
+            const agendamento = agendamentos[index];
+            const response = await fetch(`/api/agendamentos/${agendamento.id}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) {
+                throw new Error('Erro ao cancelar agendamento');
+            }
+            
+            agendamentos.splice(index, 1);
+        }
+        
+        mostrarMensagem("Agendamentos selecionados foram cancelados com sucesso.", "success");
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById("cancelModal"));
+        modal.hide();
+        atualizarStatus();
+    } catch (error) {
+        console.error('Erro ao cancelar agendamentos:', error);
+        mostrarMensagem("Erro ao cancelar agendamentos. Tente novamente.", "danger");
+    }
 }
 
 // Função para mostrar confirmação de novo agendamento

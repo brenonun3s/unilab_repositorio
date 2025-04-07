@@ -1,4 +1,9 @@
 @charset "UTF-8";
+/* 
+    Autor: Rafael V. Gogge
+    Copyright © 2025 Rafael V. Gogge
+    Projeto: UniLab - Sistema de Gerenciamento de Laboratórios
+*/
 
 /* Importar variáveis globais */
 @import url('variables.css');
@@ -6,7 +11,7 @@
 /* Estilos gerais */
 body {
     font-family: var(--font-family);
-    background-color: var(--background-color);
+    background-color: #0511f2;
     color: var(--text-color);
     margin: 0;
     padding: 20px;
@@ -18,7 +23,7 @@ body {
 
 /* Container principal */
 .login-container {
-    background: var(--container-bg);
+    background: var(--primary-dark);
     border-radius: 15px;
     padding: 2rem;
     width: 100%;
@@ -32,7 +37,7 @@ body {
 .carousel-content {
     padding: 1rem !important;
     text-align: center;
-    background: var(--background-color);
+    background: var(--primary-dark);
     border-radius: 8px;
     margin-bottom: 1rem;
     max-width: 600px;
@@ -60,7 +65,7 @@ body {
 .login-title span {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--primary-color);
+    color: #0511f2;
     flex: 1;
 }
 
@@ -172,7 +177,7 @@ body {
 }
 
 .status-title {
-    color: var(--primary-color);
+    color: #0511f2;
     font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: 1rem;
@@ -207,13 +212,14 @@ body {
 }
 
 .agendamento-info.hoje {
-    color: var(--primary-color);
+    color: green;
+    background-color: #ffffff;
     font-weight: 500;
 }
 
 /* Ferramentas */
 .lab-info {
-    background: var(--container-bg);
+    background: #ffffff;
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -222,7 +228,7 @@ body {
 }
 
 .ferramentas-titulo {
-    color: var(--primary-color);
+    color: #0511f2;
     font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: 1rem;

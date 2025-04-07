@@ -1,5 +1,9 @@
 @charset "UTF-8";
-
+/* 
+    Autor: Rafael V. Gogge
+    Copyright © 2025 Rafael V. Gogge
+    Projeto: UniLab - Sistema de Gerenciamento de Laboratórios
+*/
 body {
     background: linear-gradient(135deg, #030A8C, #0511F2);
     font-family: 'Poppins', sans-serif;
