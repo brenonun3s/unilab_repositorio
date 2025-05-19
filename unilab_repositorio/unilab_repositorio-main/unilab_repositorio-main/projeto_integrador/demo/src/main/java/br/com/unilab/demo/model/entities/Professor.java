@@ -1,9 +1,7 @@
 package br.com.unilab.demo.model.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -17,7 +15,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "professores")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Professor {

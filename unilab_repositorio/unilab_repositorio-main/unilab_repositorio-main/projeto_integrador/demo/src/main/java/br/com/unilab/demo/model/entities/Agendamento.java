@@ -1,9 +1,7 @@
 package br.com.unilab.demo.model.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -19,7 +17,8 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Table(name = "agendamentos")
 public class Agendamento implements Serializable {
 
@@ -31,15 +30,15 @@ public class Agendamento implements Serializable {
     @Column(name = "data_agendamento")
     private String data;
 
-    @Column(name = "professor_agendado")
-    private String professor;
-
-    @Column(name = "numero_laboratorio")
-    private Integer numerolaboratorio;
-
     @Column
     private Boolean status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_laboratorio")
+    private Laboratorio laboratorio;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_professor")
+    private Professor professor;
 
 }

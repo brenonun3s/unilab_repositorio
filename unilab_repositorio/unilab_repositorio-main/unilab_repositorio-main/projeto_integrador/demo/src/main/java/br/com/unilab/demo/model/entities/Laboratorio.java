@@ -2,9 +2,7 @@ package br.com.unilab.demo.model.entities;
 
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Type;
 
 import java.io.Serializable;
@@ -22,7 +20,8 @@ import java.util.UUID;
 @Table(name = "laboratorios")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class Laboratorio{
 
     @Id
