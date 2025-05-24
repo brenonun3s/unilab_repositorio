@@ -1,4 +1,4 @@
-/* 
+/*
     Autor: Rafael V. Gogge
     Copyright © 2025 Rafael V. Gogge
     Projeto: UniLab - Sistema de Gerenciamento de Laboratórios
@@ -12,12 +12,57 @@ let laboratorios = [];
 
 // Função para inicializar dados de exemplo se não existirem
 function inicializarDadosExemplo() {
+    // Verificar se já existem laboratórios
+    const labsExistem = localStorage.getItem("laboratorios") !== null;
 
+    if (!labsExistem) {
+        console.log('Inicializando dados de exemplo...');
 
+        // Criar laboratórios de exemplo
+        const labsExemplo = [
+            {
+                id: 0,
+                nome: "Laboratório de Informática",
+                tipo: "Informática",
+                localizacao: "Bloco A, Sala 101",
+                capacidade: 30,
+                status: "disponivel",
+                ferramentas: ["Computador", "Monitor", "Mouse", "Teclado", "Projetor", "Impressora"]
+            },
+            {
+                id: 1,
+                nome: "Laboratório de Química",
+                tipo: "Química",
+                localizacao: "Bloco B, Sala 203",
+                capacidade: 25,
+                status: "disponivel",
+                ferramentas: ["Microscópio", "Vidraria", "Reagentes", "Balança", "pHmetro"]
+            },
+            {
+                id: 2,
+                nome: "Laboratório de Física",
+                tipo: "Física",
+                localizacao: "Bloco B, Sala 205",
+                capacidade: 20,
+                status: "disponivel",
+                ferramentas: ["Osciloscópio", "Multímetro", "Gerador de Sinais", "Kit de Ferramentas"]
+            },
+            {
+                id: 3,
+                nome: "Laboratório de Biologia",
+                tipo: "Biologia",
+                localizacao: "Bloco C, Sala 102",
+                capacidade: 22,
+                status: "disponivel",
+                ferramentas: ["Microscópio", "Centrífuga", "Estufa", "Pipeta"]
+            }
+        ];
+
+        localStorage.setItem("laboratorios", JSON.stringify(labsExemplo));
 
         // Criar professores de exemplo
         const professoresExistem = localStorage.getItem("professores") !== null;
-        
+
         if (!professoresExistem) {
             const professoresExemplo = [
                 { id: 1, nome: "Dr. Carlos Silva", departamento: "Ciência da Computação" },
@@ -25,37 +70,38 @@ function inicializarDadosExemplo() {
                 { id: 3, nome: "Dr. Roberto Santos", departamento: "Física" },
                 { id: 4, nome: "Dra. Mariana Costa", departamento: "Biologia" }
             ];
-            
+
             localStorage.setItem("professores", JSON.stringify(professoresExemplo));
         }
+    }
 }
 
 // Função para mostrar o overlay de seleção de laboratório
 function showLabSelectionOverlay() {
     const overlay = document.getElementById('labSelectionOverlay');
-    
+
     // Resetar o grid de laboratórios
     const labGrid = document.getElementById('labSelectionGrid');
     labGrid.innerHTML = '';
-    
+
     // Carregar laboratórios do localStorage
     laboratorios = JSON.parse(localStorage.getItem("laboratorios")) || [];
-    
+
     if (laboratorios.length === 0) {
         labGrid.innerHTML = '<p class="text-center text-white">Nenhum laboratório encontrado.</p>';
         return;
     }
-    
+
     // Criar card para cada laboratório
     laboratorios.forEach((lab, index) => {
         // Verificar status do laboratório
         const agendamentosLab = JSON.parse(localStorage.getItem(`lab${lab.id}_agendamentos`)) || [];
         const hoje = new Date().toISOString().split('T')[0];
         const agendamentosHoje = agendamentosLab.filter(a => a.data === hoje);
-        
+
         let statusClass = 'disponivel';
         let statusText = 'Disponível';
-        
+
         if (agendamentosHoje.length > 0) {
             if (agendamentosHoje.some(a => a.horario === "19:00 às 20:20 e 20:50 às 22:00")) {
                 statusClass = 'ocupado';
@@ -65,7 +111,7 @@ function showLabSelectionOverlay() {
                 statusText = 'Parcialmente Disponível';
             }
         }
-        
+
         // Criar card
         const card = document.createElement('div');
         card.className = 'lab-card';
@@ -82,13 +128,13 @@ function showLabSelectionOverlay() {
                 ${statusText}
             </span>
         `;
-        
+
         // Adicionar evento de clique
         card.addEventListener('click', () => {
             selecionarLaboratorio(lab.id);
             hideLabSelectionOverlay();
         });
-        
+
         // Adicionar evento de teclado para acessibilidade
         card.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -97,10 +143,10 @@ function showLabSelectionOverlay() {
                 hideLabSelectionOverlay();
             }
         });
-        
+
         labGrid.appendChild(card);
     });
-    
+
     // Mostrar overlay com animação
     overlay.style.display = 'flex';
     setTimeout(() => {
@@ -112,11 +158,11 @@ function showLabSelectionOverlay() {
 function hideLabSelectionOverlay() {
     const overlay = document.getElementById('labSelectionOverlay');
     overlay.classList.add('opacity-0', 'translate-y-10');
-    
+
     setTimeout(() => {
         overlay.style.display = 'none';
     }, 500);
-    
+
     // Mostrar o conteúdo principal
     document.getElementById('main-content').classList.remove('opacity-0');
 }
@@ -133,7 +179,7 @@ function getLabIcon(tipo) {
         'Mecânica': 'bi-gear',
         'Artes': 'bi-palette'
     };
-    
+
     return icons[tipo] || 'bi-building';
 }
 
@@ -175,19 +221,19 @@ function formatarData(data) {
 function atualizarInformacoesLaboratorio(lab) {
     // Atualizar título
     document.getElementById('labTitle').textContent = `Agendamento: ${lab.nome}`;
-    
+
     // Atualizar detalhes
     document.getElementById('labLocalizacao').textContent = lab.localizacao || 'Não informado';
     document.getElementById('labTipo').textContent = lab.tipo || 'Não informado';
     document.getElementById('labCapacidade').textContent = `${lab.capacidade || 0} lugares`;
-    
+
     // Verificar status do laboratório
     const hoje = new Date().toISOString().split('T')[0];
     const agendamentosHoje = agendamentos.filter(a => a.data === hoje);
-    
+
     const statusIcon = document.querySelector('.status-icon');
     const labStatusElement = document.getElementById('labStatus');
-    
+
     if (agendamentosHoje.length === 0) {
         statusIcon.className = 'bi bi-circle-fill status-icon disponivel';
         labStatusElement.textContent = 'Disponível Hoje';
@@ -220,33 +266,37 @@ function selecionarLaboratorio(labId) {
     console.log(`Selecionando laboratório ${labId}...`);
     window.labAtual = labId;
     labGlobal = laboratorios.find(lab => lab.id === labId);
-    
+
     if (!labGlobal) {
         console.error(`Laboratório com ID ${labId} não encontrado`);
         mostrarMensagem('Erro ao carregar laboratório.', 'danger');
         return;
     }
-    
+
     // Carregar agendamentos do laboratório
     agendamentos = JSON.parse(localStorage.getItem(`lab${labId}_agendamentos`)) || [];
-    
+
     // Atualizar informações do laboratório
     atualizarInformacoesLaboratorio(labGlobal);
-    
+
     // Carregar professores
     carregarProfessores();
-    
+
     // Atualizar status
     atualizarStatus();
-    
+
     // Carregar ferramentas
     carregarFerramentasLaboratorio(labId);
-    
+
     // Animar elementos
     animateElements();
 }
 
-
+// Salva os agendamentos do laboratório atual no localStorage
+function salvarAgendamentos() {
+    localStorage.setItem(`lab${window.labAtual}_agendamentos`, JSON.stringify(agendamentos));
+    console.log('Agendamentos salvos com sucesso');
+}
 
 // Função para mostrar mensagens ao usuário
 function mostrarMensagem(mensagem, tipo = 'info') {
@@ -261,14 +311,14 @@ function mostrarMensagem(mensagem, tipo = 'info') {
     alertDiv.style.opacity = '0';
     alertDiv.style.transform = 'translateY(-20px)';
     alertDiv.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    
+
     alertDiv.innerHTML = `
         ${mensagem}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
     `;
 
     document.body.appendChild(alertDiv);
-    
+
     // Animar entrada
     setTimeout(() => {
         alertDiv.style.opacity = '1';
@@ -279,7 +329,7 @@ function mostrarMensagem(mensagem, tipo = 'info') {
     setTimeout(() => {
         alertDiv.style.opacity = '0';
         alertDiv.style.transform = 'translateY(-20px)';
-        
+
         setTimeout(() => {
             alertDiv.remove();
         }, 300);
@@ -307,13 +357,13 @@ function addRippleEffect() {
         button.addEventListener('click', function(event) {
             const ripple = document.createElement('span');
             const rect = this.getBoundingClientRect();
-            
+
             ripple.className = 'ripple';
             ripple.style.left = `${event.clientX - rect.left}px`;
             ripple.style.top = `${event.clientY - rect.top}px`;
-            
+
             this.appendChild(ripple);
-            
+
             setTimeout(() => {
                 ripple.remove();
             }, 600);
@@ -584,7 +634,7 @@ async function reservar(horario) {
         mostrarMensagem(`Reserva confirmada!\nProfessor: ${nomeProfessor}\nData: ${formatarData(dataAgendamento)}\nHorário: ${horario}`, "success");
         atualizarStatus();
         showConfirmAgendamento();
-        
+
         // Atualizar informações do laboratório
         atualizarInformacoesLaboratorio(labGlobal);
     } else {
@@ -653,7 +703,7 @@ async function cancelarAgendamentosSelecionados() {
     const modal = bootstrap.Modal.getInstance(document.getElementById("cancelModal"));
     modal.hide();
     atualizarStatus();
-    
+
     // Atualizar informações do laboratório
     atualizarInformacoesLaboratorio(labGlobal);
 }
@@ -672,16 +722,16 @@ function showConfirmAgendamento() {
 // Inicialização quando o DOM estiver carregado
 document.addEventListener("DOMContentLoaded", () => {
     console.log('DOM carregado, iniciando aplicação...');
-    
+
     // Inicializar dados de exemplo se necessário
-    //inicializarDadosExemplo();
-    
+    inicializarDadosExemplo();
+
     // Carregar dados
     carregarDados();
-    
+
     // Adicionar efeito de ripple aos botões
     addRippleEffect();
-    
+
     // Adicionar evento para o botão de trocar laboratório
     document.querySelector('.btn-change-lab')?.addEventListener('click', showLabSelectionOverlay);
 });

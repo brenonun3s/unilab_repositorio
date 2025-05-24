@@ -1,102 +1,70 @@
-/* 
+/*
     Autor: Rafael V. Gogge
     Copyright © 2025 Rafael V. Gogge
     Projeto: UniLab - Sistema de Gerenciamento de Laboratórios
 */
-// Variável global para armazenar a instância do modal
-let professorModalInstance;
-// Recupera os professores do localStorage ou inicializa com um array vazio
+
+// Variáveis globais
 let professores = [];
 
-// Verificar autenticação quando a página carrega
-document.addEventListener('DOMContentLoaded', function() {
-    checkAuth();
-    loadProfessores();
-    setupEventListeners();
+// Evento ao carregar o DOM
+document.addEventListener('DOMContentLoaded', () => {
+    verificarAutenticacao();
+    carregarProfessores();
+    configurarEventos();
 });
 
-// Configurar event listeners
-function setupEventListeners() {
-    // Formulário de filtros
-    document.getElementById('filterForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        filterProfessores();
-    });
+// Função para verificar autenticação
+function verificarAutenticacao() {
+    const autenticado = localStorage.getItem('isAuthenticated') === 'true';
+    const papelUsuario = localStorage.getItem('userRole');
 
-    // Botão de novo professor (no cabeçalho)
-    document.getElementById('novoProfessor').addEventListener('click', function() {
-        openProfessorModal();
-    });
-
-    // Botão flutuante de novo professor
-    document.getElementById('btnNovoProfessor').addEventListener('click', function() {
-        openProfessorModal();
-    });
-
-    // Botão de salvar no modal
-    document.getElementById('salvarProfessor').addEventListener('click', function() {
-        saveProfessor();
-    });
-
-    // Botão de limpar filtros
-    document.querySelector('button[type="reset"]').addEventListener('click', function() {
-        clearFilters();
-    });
-    
-    // Botão de logout
-    document.querySelector('.logout-button').addEventListener('click', function(e) {
-        e.preventDefault();
-        logout();
-    });
-}
-
-// Verificar autenticação
-function checkAuth() {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-    const userRole = localStorage.getItem('userRole');
-    
-    // Verificar se o usuário está autenticado e se é um administrador
-    if (!isAuthenticated || userRole !== 'administrador') {
-        // Mostrar uma mensagem antes de redirecionar se o usuário estiver autenticado, mas não for administrador
-        if (isAuthenticated && userRole !== 'administrador') {
-            // Salvar mensagem para ser exibida na página de destino
+    if (!autenticado || papelUsuario !== 'administrador') {
+        if (autenticado && papelUsuario !== 'administrador') {
             sessionStorage.setItem('redirectMessage', 'Você não tem permissão para acessar a página de gerenciamento de professores.');
             sessionStorage.setItem('redirectMessageType', 'danger');
         }
         window.location.href = 'sejaBemVindo.html';
         return;
     }
-    
-    // Atualizar nome do usuário, se disponível
-    const userName = localStorage.getItem('userName');
-    const userNameElement = document.querySelector('.user-name');
-    if (userName && userNameElement) {
-        userNameElement.textContent = userName;
+
+    const nomeUsuario = localStorage.getItem('userName');
+    const elementoNomeUsuario = document.querySelector('.user-name');
+    if (nomeUsuario && elementoNomeUsuario) {
+        elementoNomeUsuario.textContent = nomeUsuario;
     }
 }
 
-// Inicializar a estrutura dos professores se necessário
-function initializeProfessores() {
-    // Limpar professores do localStorage
-    localStorage.removeItem('professores');
-    professores = [];
+// Função para configurar eventos
+function configurarEventos() {
+    document.getElementById('filterForm').addEventListener('submit', e => {
+        e.preventDefault();
+        filtrarProfessores();
+    });
+
+    document.getElementById('novoProfessor').addEventListener('click', () => abrirModalProfessor());
+    document.getElementById('btnNovoProfessor').addEventListener('click', () => abrirModalProfessor());
+    document.getElementById('salvarProfessor').addEventListener('click', () => salvarProfessor());
+    document.querySelector('button[type="reset"]').addEventListener('click', () => limparFiltros());
+    document.querySelector('.logout-button').addEventListener('click', e => {
+        e.preventDefault();
+        logout();
+    });
 }
 
-// Carregar professores
-function loadProfessores() {
+// Função para carregar professores
+function carregarProfessores() {
     professores = JSON.parse(localStorage.getItem('professores')) || [];
-    updateStatistics(professores);
-    displayProfessores(professores);
+    atualizarEstatisticas(professores);
+    exibirProfessores(professores);
 }
 
-// Atualizar estatísticas
-function updateStatistics(profs) {
+// Função para atualizar estatísticas
+function atualizarEstatisticas(profs) {
     const total = profs.length;
-    const ativos = profs.filter(prof => prof.status === 'ativo').length;
-    const inativos = profs.filter(prof => prof.status === 'inativo').length;
-    
-    // Contar departamentos únicos
-    const departamentos = [...new Set(profs.map(prof => prof.departamento))];
+    const ativos = profs.filter(p => p.status === 'ativo').length;
+    const inativos = profs.filter(p => p.status === 'inativo').length;
+    const departamentos = [...new Set(profs.map(p => p.departamento))];
     const totalDepartamentos = departamentos.length;
 
     document.getElementById('totalProfessores').textContent = total;
@@ -105,8 +73,8 @@ function updateStatistics(profs) {
     document.getElementById('totalDepartamentos').textContent = totalDepartamentos;
 }
 
-// Exibir professores na tabela
-function displayProfessores(profs) {
+// Função para exibir professores na tabela
+function exibirProfessores(profs) {
     const tbody = document.getElementById('professoresTable');
     tbody.innerHTML = '';
 
@@ -123,16 +91,16 @@ function displayProfessores(profs) {
             <td>${prof.nome || ''}</td>
             <td>${prof.email || ''}</td>
             <td>${prof.matricula || ''}</td>
-            <td>${formatDepartamento(prof.departamento || 'outro')}</td>
-            <td><span class="status-badge status-${prof.status || 'inativo'}">${formatStatus(prof.status || 'inativo')}</span></td>
+            <td>${formatarDepartamento(prof.departamento || 'outro')}</td>
+            <td><span class="status-badge status-${prof.status || 'inativo'}">${formatarStatus(prof.status || 'inativo')}</span></td>
             <td>
-                <button class="btn-action" onclick="editProfessor('${prof.id}')" title="Editar">
+                <button class="btn-action" onclick="editarProfessor('${prof.id}')" title="Editar">
                     <i class="bi bi-pencil"></i>
                 </button>
-                <button class="btn-action" onclick="deleteProfessor('${prof.id}')" title="Excluir">
+                <button class="btn-action" onclick="excluirProfessor('${prof.id}')" title="Excluir">
                     <i class="bi bi-trash"></i>
                 </button>
-                <button class="btn-action" onclick="showPassword('${prof.id}')" title="Mostrar Senha">
+                <button class="btn-action" onclick="mostrarSenha('${prof.id}')" title="Mostrar Senha">
                     <i class="bi bi-key"></i>
                 </button>
             </td>
@@ -141,223 +109,194 @@ function displayProfessores(profs) {
     });
 }
 
-// Filtrar professores
-function filterProfessores() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+// Função para filtrar professores
+function filtrarProfessores() {
+    const termoBusca = document.getElementById('searchInput').value.toLowerCase();
     const status = document.getElementById('statusFilter').value;
     const departamento = document.getElementById('departamentoFilter').value;
 
-    let filteredProfs = professores.filter(prof => {
-        const matchesSearch = (prof.nome || '').toLowerCase().includes(searchTerm) ||
-                            (prof.email || '').toLowerCase().includes(searchTerm) ||
-                            (prof.matricula || '').toLowerCase().includes(searchTerm);
-        const matchesStatus = !status || prof.status === status;
-        const matchesDepartamento = !departamento || prof.departamento === departamento;
-        
-        return matchesSearch && matchesStatus && matchesDepartamento;
+    const profsFiltrados = professores.filter(prof => {
+        const correspondeBusca = (prof.nome || '').toLowerCase().includes(termoBusca) ||
+            (prof.email || '').toLowerCase().includes(termoBusca) ||
+            (prof.matricula || '').toLowerCase().includes(termoBusca);
+        const correspondeStatus = !status || prof.status === status;
+        const correspondeDepartamento = !departamento || prof.departamento === departamento;
+
+        return correspondeBusca && correspondeStatus && correspondeDepartamento;
     });
 
-    displayProfessores(filteredProfs);
+    exibirProfessores(profsFiltrados);
 }
 
-// Limpar filtros
-function clearFilters() {
+// Função para limpar filtros
+function limparFiltros() {
     document.getElementById('filterForm').reset();
-    loadProfessores();
+    carregarProfessores();
 }
 
-// Abrir modal de professor
-function openProfessorModal(profId = null) {
+// Função para abrir modal de professor
+function abrirModalProfessor(idProf = null) {
     const modal = new bootstrap.Modal(document.getElementById('professorModal'));
     const form = document.getElementById('professorForm');
-    const title = document.querySelector('#professorModal .modal-title');
+    const titulo = document.querySelector('#professorModal .modal-title');
 
     form.reset();
-    if (profId) {
-        title.innerHTML = '<i class="bi bi-person-gear"></i> Editar Professor';
-        const prof = getProfessorById(profId);
+    if (idProf) {
+        titulo.innerHTML = '<i class="bi bi-person-gear"></i> Editar Professor';
+        const prof = obterProfessorPorId(idProf);
         if (prof) {
             form.nome.value = prof.nome || '';
             form.email.value = prof.email || '';
             form.matricula.value = prof.matricula || '';
             form.departamento.value = prof.departamento || 'computacao';
             form.status.value = prof.status || 'ativo';
-            form.dataset.profId = profId;
+            form.dataset.profId = idProf;
         }
     } else {
-        title.innerHTML = '<i class="bi bi-person-plus"></i> Novo Professor';
+        titulo.innerHTML = '<i class="bi bi-person-plus"></i> Novo Professor';
         delete form.dataset.profId;
     }
 
     modal.show();
 }
 
-// Salvar professor
-function saveProfessor() {
+// Função para salvar professor
+function salvarProfessor() {
     const form = document.getElementById('professorForm');
-    const profId = form.dataset.profId;
+    const idProf = form.dataset.profId;
     const prof = {
-        id: profId || generateId(),
+        id: idProf || gerarId(),
         nome: form.nome.value.trim().toUpperCase(),
         email: form.email.value.trim().toLowerCase(),
-        matricula: form.matricula.value.trim() || generateMatricula(),
+        matricula: form.matricula.value.trim() || gerarMatricula(),
         departamento: form.departamento.value,
         status: form.status.value,
-        senha: profId ? getProfessorById(profId).senha : generatePassword()
+        senha: idProf ? obterProfessorPorId(idProf).senha : gerarSenha()
     };
 
-    if (!validateProfessor(prof)) {
-        showNotification('Por favor, preencha todos os campos obrigatórios.', 'danger');
+    if (!validarProfessor(prof)) {
+        exibirNotificacao('Por favor, preencha todos os campos obrigatórios.', 'danger');
         return;
     }
-    
-    if (profId) {
-        // Atualizar professor existente
-        professores = professores.map(p => p.id === profId ? prof : p);
+
+    if (idProf) {
+        professores = professores.map(p => p.id === idProf ? prof : p);
     } else {
-        // Adicionar novo professor
         professores.push(prof);
     }
 
     localStorage.setItem('professores', JSON.stringify(professores));
-    
+
     try {
         const modalEl = document.getElementById('professorModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        if (modalInstance) {
-            modalInstance.hide();
+        const instanciaModal = bootstrap.Modal.getInstance(modalEl);
+        if (instanciaModal) {
+            instanciaModal.hide();
         }
     } catch (e) {
         console.error('Erro ao fechar modal:', e);
     }
-    
-    loadProfessores();
-    showNotification(`Professor ${profId ? 'atualizado' : 'adicionado'} com sucesso!`, 'success');
+
+    carregarProfessores();
+    exibirNotificacao(`Professor ${idProf ? 'atualizado' : 'adicionado'} com sucesso!`, 'success');
 }
 
-// Editar professor
-function editProfessor(profId) {
-    openProfessorModal(profId);
+// Função para editar professor
+function editarProfessor(idProf) {
+    abrirModalProfessor(idProf);
 }
 
-// Excluir professor
-function deleteProfessor(profId) {
+// Função para excluir professor
+function excluirProfessor(idProf) {
     if (confirm('Tem certeza que deseja excluir este professor?')) {
-        professores = professores.filter(prof => prof.id !== profId);
+        professores = professores.filter(p => p.id !== idProf);
         localStorage.setItem('professores', JSON.stringify(professores));
-        loadProfessores();
-        showNotification('Professor excluído com sucesso!', 'success');
+        carregarProfessores();
+        exibirNotificacao('Professor excluído com sucesso!', 'success');
     }
 }
 
-// Mostrar senha do professor
-function showPassword(profId) {
-    const prof = getProfessorById(profId);
+// Função para mostrar senha do professor
+function mostrarSenha(idProf) {
+    const prof = obterProfessorPorId(idProf);
     if (prof) {
         alert(`Senha do professor ${prof.nome}: ${prof.senha}`);
     }
 }
 
 // Funções auxiliares
-function getProfessorById(profId) {
-    return professores.find(prof => prof.id === profId);
+function obterProfessorPorId(idProf) {
+    return professores.find(p => p.id === idProf);
 }
 
-function generateId() {
+function gerarId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
 
-// Gera uma senha aleatória com 10 caracteres
-function generatePassword() {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@$!%*?&";
-    let password = "";
+function gerarSenha() {
+    const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@$!%*?&";
+    let senha = "";
     for (let i = 0; i < 10; i++) {
-        password += chars.charAt(Math.floor(Math.random() * chars.length));
+        senha += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
     }
-    return password;
+    return senha;
 }
 
-// Gera uma matrícula aleatória
-function generateMatricula() {
+function gerarMatricula() {
     const ano = new Date().getFullYear();
-    const num = Math.floor(Math.random() * 900000) + 100000; // 6 dígitos
-    return `${ano}${num}`;
+    const numero = Math.floor(Math.random() * 900000) + 100000;
+    return `${ano}${numero}`;
 }
 
-function validateProfessor(prof) {
+function validarProfessor(prof) {
     return prof.nome && prof.email && prof.matricula && prof.departamento && prof.status;
 }
 
-function formatStatus(status) {
-    const statusMap = {
+function formatarStatus(status) {
+    const mapaStatus = {
         'ativo': 'Ativo',
         'inativo': 'Inativo'
     };
-    return statusMap[status] || status;
+    return mapaStatus[status] || status;
 }
 
-function formatDepartamento(departamento) {
-    const deptoMap = {
+function formatarDepartamento(departamento) {
+    const mapaDepartamentos = {
         'computacao': 'Computação',
+        'matematica': 'Matemática',
         'fisica': 'Física',
         'quimica': 'Química',
-        'matematica': 'Matemática',
+        'biologia': 'Biologia',
+        'engenharia': 'Engenharia',
+        'letras': 'Letras',
         'outro': 'Outro'
     };
-    return deptoMap[departamento] || departamento;
+    return mapaDepartamentos[departamento] || departamento;
 }
 
-// Sistema de notificações
-function showNotification(message, type = 'info') {
-    // Verificar se existe um elemento de notificação no DOM
-    let notification = document.getElementById('notification');
-    
-    // Se não existir, criar um
-    if (!notification) {
-        notification = document.createElement('div');
-        notification.id = 'notification';
-        notification.className = `toast align-items-center text-white bg-${type} border-0`;
-        notification.setAttribute('role', 'alert');
-        notification.setAttribute('aria-live', 'assertive');
-        notification.setAttribute('aria-atomic', 'true');
-        notification.style.position = 'fixed';
-        notification.style.bottom = '20px';
-        notification.style.right = '20px';
-        notification.style.zIndex = '5000';
-        
-        notification.innerHTML = `
-            <div class="d-flex">
-                <div class="toast-body" id="notificationBody">
-                    ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-        `;
-        
-        document.body.appendChild(notification);
-    } else {
-        const notificationBody = document.getElementById('notificationBody');
-        if (notificationBody) {
-            notificationBody.textContent = message;
-        }
-        notification.className = `toast align-items-center text-white bg-${type} border-0`;
-    }
-    
-    try {
-        const toast = new bootstrap.Toast(notification);
-        toast.show();
-    } catch (e) {
-        console.error('Erro ao mostrar notificação:', e);
-        alert(message);
-    }
+// Função para exibir notificações
+function exibirNotificacao(mensagem, tipo = 'info') {
+    const alerta = document.createElement('div');
+    alerta.className = `alert alert-${tipo} alert-dismissible fade show`;
+    alerta.role = 'alert';
+    alerta.innerHTML = `
+        ${mensagem}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    `;
+    const container = document.getElementById('alertContainer');
+    container.appendChild(alerta);
+
+    setTimeout(() => {
+        alerta.classList.remove('show');
+        alerta.classList.add('hide');
+        alerta.addEventListener('transitionend', () => alerta.remove());
+    }, 4000);
 }
 
-// Logout
+// Função de logout
 function logout() {
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('userRole');
+    localStorage.setItem('isAuthenticated', 'false');
     localStorage.removeItem('userName');
-    localStorage.removeItem('rememberMe');
-    localStorage.removeItem('username');
+    localStorage.removeItem('userRole');
     window.location.href = 'index.html';
 }
