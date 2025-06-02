@@ -4,7 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * Classe Controller que carregará apenas os templates
@@ -54,7 +53,7 @@ public class MainController {
 
     @GetMapping("/seja-bem-vindo")
     public String sejaBemVindo(){
-        return "sejaBemVindo";
+        return "sejabemvindoadm";
     }
 
     @GetMapping("agendar-laboratorio")

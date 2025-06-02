@@ -20,6 +20,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Estado do formulário
     let isSubmitting = false
 
+    // Exemplo de onde inserir:
+
+// Função de login falsa (aceita qualquer coisa)
+    async function authenticate(username, password) {
+        return {
+            success: true,
+            message: "Login simulado com sucesso!"
+        }
+    }
+
+
     // Função para mostrar feedback
     function showFeedback(message, type = "success") {
         feedback.className = `alert alert-${type} alert-dismissible fade show`
@@ -43,32 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 5000)
     }
 
-    // Função para validar formulário com animações
-    function validateForm() {
-        let isValid = true
-
-        // Validar usuário
-        if (!usernameInput.value.trim()) {
-            usernameInput.classList.add("is-invalid")
-            animateShake(usernameInput.parentElement)
-            isValid = false
-        } else {
-            usernameInput.classList.remove("is-invalid")
-            usernameInput.classList.add("is-valid")
-        }
-
-        // Validar senha
-        if (!passwordInput.value) {
-            passwordInput.classList.add("is-invalid")
-            animateShake(passwordInput.parentElement)
-            isValid = false
-        } else {
-            passwordInput.classList.remove("is-invalid")
-            passwordInput.classList.add("is-valid")
-        }
-
-        return isValid
-    }
 
     // Função para animar elemento com efeito de shake
     function animateShake(element) {
@@ -80,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
             () => {
                 element.style.animation = ""
             },
-            { once: true },
+            {once: true},
         )
     }
 
@@ -103,25 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.head.appendChild(style)
     }
 
-    // Função para simular autenticação
-    async function authenticate(username, password) {
-        // Simular delay de rede
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-
-        // Credenciais de teste
-        if (username === "admin" && password === "123456") {
-            // Salvar informações do usuário
-            localStorage.setItem("isAuthenticated", "true")
-            localStorage.setItem("userRole", "administrador")
-            localStorage.setItem("userName", username)
-            return { success: true, message: "Login realizado com sucesso!" }
-        }
-
-        return {
-            success: false,
-            message: "Usuário ou senha incorretos. Tente novamente.",
-        }
-    }
 
     // Função para mostrar estado de loading no botão
     function setButtonLoading(button, isLoading) {
@@ -170,13 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", async (e) => {
         e.preventDefault()
 
-        if (!validateForm()) {
-            showFeedback("Por favor, preencha todos os campos obrigatórios.", "danger")
-            return
-        }
-
-        if (isSubmitting) return
-        isSubmitting = true
 
         // Mostrar estado de loading
         setButtonLoading(loginBtn, true)
@@ -312,19 +271,19 @@ document.addEventListener("DOMContentLoaded", () => {
             })
         })
 
-        // Prevenir envio do formulário ao pressionar Enter
-        ;[usernameInput, passwordInput].forEach((input) => {
-            input.addEventListener("keypress", (e) => {
-                if (e.key === "Enter") {
-                    e.preventDefault()
-                    if (e.target === usernameInput) {
-                        passwordInput.focus()
-                    } else {
-                        loginForm.requestSubmit()
-                    }
+    // Prevenir envio do formulário ao pressionar Enter
+    ;[usernameInput, passwordInput].forEach((input) => {
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault()
+                if (e.target === usernameInput) {
+                    passwordInput.focus()
+                } else {
+                    loginForm.requestSubmit()
                 }
-            })
+            }
         })
+    })
 
     // Adicionar efeito de partículas no background (opcional)
     function createParticles() {

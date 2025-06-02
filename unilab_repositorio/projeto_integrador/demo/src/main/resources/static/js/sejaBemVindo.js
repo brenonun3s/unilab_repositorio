@@ -18,14 +18,13 @@ function animateCounters() {
     counters.forEach(counter => {
         const target = parseInt(counter.textContent);
         const duration = 2000; // 2 segundos
-        const step = target / (duration / 30); // 30 é o intervalo do setInterval
+        const step = target / (duration / 30);
         let current = 0;
 
         const updateCounter = () => {
             if (current < target) {
                 current += step;
                 counter.textContent = Math.ceil(current);
-
                 if (current >= target) {
                     counter.textContent = target;
                     clearInterval(interval);
@@ -33,23 +32,100 @@ function animateCounters() {
             }
         };
 
-        // Iniciar com zero
         counter.textContent = '0';
-
-        // Atualizar a cada 30ms
         const interval = setInterval(updateCounter, 30);
+    });
+}
+
+// Função para mostrar feedback com animação
+function showFeedback(message, type = 'success') {
+    const feedback = document.createElement('div');
+    feedback.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+    feedback.style.zIndex = '9999';
+    feedback.style.opacity = '0';
+    feedback.style.transform = 'translateY(-20px)';
+    feedback.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+
+    feedback.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    document.body.appendChild(feedback);
+
+    setTimeout(() => {
+        feedback.style.opacity = '1';
+        feedback.style.transform = 'translateY(0)';
+    }, 10);
+
+    setTimeout(() => {
+        feedback.style.opacity = '0';
+        feedback.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+            feedback.remove();
+        }, 300);
+    }, 5000);
+}
+
+// Função para simular notificações
+function simulateNotifications() {
+    const notificationList = document.querySelector('.notification-list');
+    const notifications = [
+        {
+            icon: 'bi-calendar-check',
+            title: 'Novo Agendamento',
+            description: 'Um novo agendamento foi realizado para o Laboratório de Informática.',
+            time: '5 minutos atrás'
+        },
+        {
+            icon: 'bi-exclamation-triangle',
+            title: 'Manutenção Programada',
+            description: 'O Laboratório de Química passará por manutenção amanhã.',
+            time: '1 hora atrás'
+        },
+        {
+            icon: 'bi-person-plus',
+            title: 'Novo Professor',
+            description: 'Um novo professor foi cadastrado no sistema.',
+            time: '2 horas atrás'
+        }
+    ];
+
+    notificationList.innerHTML = '';
+
+    notifications.forEach((notification, index) => {
+        const notificationItem = document.createElement('div');
+        notificationItem.className = 'notification-item';
+        notificationItem.style.opacity = '0';
+        notificationItem.style.transform = 'translateY(20px)';
+        notificationItem.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        notificationItem.style.transitionDelay = `${index * 0.1}s`;
+
+        notificationItem.innerHTML = `
+            <div class="notification-icon">
+                <i class="bi ${notification.icon}"></i>
+            </div>
+            <div class="notification-content">
+                <h6>${notification.title}</h6>
+                <p>${notification.description}</p>
+                <small>${notification.time}</small>
+            </div>
+        `;
+
+        notificationList.appendChild(notificationItem);
+
+        setTimeout(() => {
+            notificationItem.style.opacity = '1';
+            notificationItem.style.transform = 'translateY(0)';
+        }, 10);
     });
 }
 
 // Quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function () {
-    // Adicionar classe 'loaded' ao body para fade-in inicial
     setTimeout(() => {
-        document.body.classList.add('loaded');
-        document.body.classList.add('opacity-100');
+        document.body.classList.add('loaded', 'opacity-100');
     }, 100);
 
-    // Seleção de elementos do DOM
     const actionCards = document.querySelectorAll('.action-card');
     const fadeElements = document.querySelectorAll('.fade-up-element, .slide-in-left, .slide-in-right, .zoom-in-element');
     const notificationBell = document.querySelector('.notification-bell');
@@ -66,106 +142,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (redirectMessage) {
         showFeedback(redirectMessage, redirectMessageType);
-        // Limpar após exibir
         sessionStorage.removeItem('redirectMessage');
         sessionStorage.removeItem('redirectMessageType');
-    }
-
-    // Função para mostrar feedback com animação
-    function showFeedback(message, type = 'success') {
-        const feedback = document.createElement('div');
-        feedback.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
-        feedback.style.zIndex = '9999';
-        feedback.style.opacity = '0';
-        feedback.style.transform = 'translateY(-20px)';
-        feedback.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-
-        feedback.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        `;
-        document.body.appendChild(feedback);
-
-        // Animar entrada
-        setTimeout(() => {
-            feedback.style.opacity = '1';
-            feedback.style.transform = 'translateY(0)';
-        }, 10);
-
-        // Remover feedback após 5 segundos
-        setTimeout(() => {
-            feedback.style.opacity = '0';
-            feedback.style.transform = 'translateY(-20px)';
-
-            setTimeout(() => {
-                feedback.remove();
-            }, 300);
-        }, 5000);
-    }
-
-    // Função para verificar autenticação
-    function checkAuth() {
-        const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-        const userRole = localStorage.getItem('userRole');
-        const userName = localStorage.getItem('userName');
-
-        if (!isAuthenticated) {
-            window.location.href = 'index.html';
-            return;
-        }
-
-        // Atualizar nome do usuário
-        if (userName) {
-            userNameElement.textContent = userName;
-        }
-
-        // Controlar visibilidade dos cards baseado no papel do usuário
-        const managementCards = document.querySelectorAll('[data-action="manage-professors"], [data-action="manage-labs"]');
-        managementCards.forEach(card => {
-            if (userRole !== 'administrador') {
-                card.style.display = 'none';
-            }
-        });
     }
 
     // Adicionar event listeners para os cards de ação
     actionCards.forEach(card => {
         card.addEventListener('click', function () {
             const action = this.getAttribute('data-action');
-            const userRole = localStorage.getItem('userRole');
-
-            // Verificar permissões para ações administrativas
-            if ((action === 'manage-professors' || action === 'manage-labs') && userRole !== 'administrador') {
-                showFeedback('Você não tem permissão para acessar esta funcionalidade.', 'danger');
-                return;
-            }
-
-            // Adicionar efeito de clique
             this.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 this.style.transform = '';
             }, 150);
-
-            // Redirecionar baseado na ação
-            setTimeout(() => {
-                switch (action) {
-                    case 'schedule':
-                        window.location.href = '/main/agendar-laboratorio';
-                        break;
-                    case 'history':
-                        window.location.href = '/main/historico';
-                        break;
-                    case 'manage-professors':
-                        window.location.href = '/main/gerenciar-professor';
-                        break;
-                    case 'manage-labs':
-                        window.location.href = '/main/gerenciar-laboratorio';
-                        break;
-                }
-            }, 300);
         });
 
-        // Suporte a teclado
         card.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -176,9 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Event Listener para o sino de notificações
     notificationBell.addEventListener('click', function () {
-        // Marcar notificações como lidas
         this.querySelector('.notification-badge').style.display = 'none';
-        // Simular carregamento de notificações
         simulateNotifications();
     });
 
@@ -186,83 +174,18 @@ document.addEventListener('DOMContentLoaded', function () {
     logoutButton.addEventListener('click', function (e) {
         e.preventDefault();
 
-        // Efeito de clique
         this.style.transform = 'scale(0.95)';
         setTimeout(() => {
             this.style.transform = '';
         }, 150);
 
-        // Mostrar feedback
         showFeedback('Logout realizado com sucesso. Redirecionando...', 'info');
 
-        // Limpar dados do usuário
         setTimeout(() => {
-            localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('userRole');
-            localStorage.removeItem('userName');
-            localStorage.removeItem('rememberMe');
-            localStorage.removeItem('username');
-
-            // Redirecionar para página inicial
+            localStorage.clear();
             window.location.href = 'index.html';
-        }, 1500);
+        }, 2000);
     });
-
-    // Função para simular notificações
-    function simulateNotifications() {
-        const notifications = [
-            {
-                icon: 'bi-calendar-check',
-                title: 'Novo Agendamento',
-                description: 'Um novo agendamento foi realizado para o Laboratório de Informática.',
-                time: '5 minutos atrás'
-            },
-            {
-                icon: 'bi-exclamation-triangle',
-                title: 'Manutenção Programada',
-                description: 'O Laboratório de Química passará por manutenção amanhã.',
-                time: '1 hora atrás'
-            },
-            {
-                icon: 'bi-person-plus',
-                title: 'Novo Professor',
-                description: 'Um novo professor foi cadastrado no sistema.',
-                time: '2 horas atrás'
-            }
-        ];
-
-        // Limpar lista
-        notificationList.innerHTML = '';
-
-        // Adicionar notificações com animação
-        notifications.forEach((notification, index) => {
-            const notificationItem = document.createElement('div');
-            notificationItem.className = 'notification-item';
-            notificationItem.style.opacity = '0';
-            notificationItem.style.transform = 'translateY(20px)';
-            notificationItem.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            notificationItem.style.transitionDelay = `${index * 0.1}s`;
-
-            notificationItem.innerHTML = `
-                <div class="notification-icon">
-                    <i class="bi ${notification.icon}"></i>
-                </div>
-                <div class="notification-content">
-                    <h6>${notification.title}</h6>
-                    <p>${notification.description}</p>
-                    <small>${notification.time}</small>
-                </div>
-            `;
-
-            notificationList.appendChild(notificationItem);
-
-            // Animar entrada
-            setTimeout(() => {
-                notificationItem.style.opacity = '1';
-                notificationItem.style.transform = 'translateY(0)';
-            }, 10);
-        });
-    }
 
     // Adicionar animações scroll-triggered usando IntersectionObserver
     const observerOptions = {
@@ -273,13 +196,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                // Adicionar delay baseado no atributo data-delay
                 const delay = entry.target.getAttribute('data-delay') || 0;
 
                 setTimeout(() => {
                     entry.target.classList.add('visible');
 
-                    // Se for um contador, animar
                     if (entry.target.classList.contains('stats-section')) {
                         animateCounters();
                     }
@@ -290,23 +211,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }, observerOptions);
 
-    // Observar todos os elementos com animações
-    fadeElements.forEach(element => {
-        observer.observe(element);
-    });
-
-    // Observar cards de ação
-    actionCards.forEach(card => {
-        observer.observe(card);
-    });
-
-    // Observar seção de estatísticas
+    fadeElements.forEach(element => observer.observe(element));
+    actionCards.forEach(card => observer.observe(card));
     const statsSection = document.querySelector('.stats-section');
-    if (statsSection) {
-        observer.observe(statsSection);
-    }
+    if (statsSection) observer.observe(statsSection);
 
-    // Adicionar evento de scroll para mudar a navbar
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
@@ -315,11 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Verificar autenticação ao carregar a página
-    checkAuth();
-
-    // Adicionar suporte para teclado em elementos com role="button"
-    document.querySelectorAll('[role="button"]').forEach(function (button) {
+    document.querySelectorAll('[role="button"]').forEach(button => {
         button.addEventListener('keydown', function (event) {
             if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();

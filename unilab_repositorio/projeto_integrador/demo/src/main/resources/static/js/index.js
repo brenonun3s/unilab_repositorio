@@ -391,26 +391,6 @@ document.addEventListener("DOMContentLoaded", () => {
         },
     }
 
-    // Função para obter horários indisponíveis integrando com o sistema de agendamento
-    function obterHorariosIndisponiveis() {
-        function formatarDataLocal(data) {
-            const [ano, mes, dia] = data.split("-")
-            return `${dia}/${mes}/${ano}`
-        }
-        const labs = JSON.parse(localStorage.getItem("laboratorios")) || []
-        let message = ""
-        labs.forEach((lab, index) => {
-            const agendamentos = JSON.parse(localStorage.getItem(`lab${index}_agendamentos`)) || []
-            if (agendamentos.length > 0) {
-                message += `No laboratório ${lab.nome}: `
-                agendamentos.forEach((ag) => {
-                    message += `dia ${formatarDataLocal(ag.data)} (${ag.horario}); `
-                })
-                message += "\n"
-            }
-        })
-        return message || "Nenhum horário indisponível registrado."
-    }
 
     // Classe para gerenciar o assistente virtual com simplicidade e robustez
     class AssistenteVirtual {
