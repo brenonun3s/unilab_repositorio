@@ -51,9 +51,14 @@ public class MainController {
         return "redirect:/main/seja-bem-vindo";
     }
 
-    @GetMapping("/seja-bem-vindo")
+    @GetMapping("/seja-bem-vindo-adm")
     public String sejaBemVindo(){
         return "sejabemvindoadm";
+    }
+
+    @GetMapping("/seja-bem-vindo-professor")
+    public String sejaBemVindoProfessor(){
+        return "sejabemvindoprofessor";
     }
 
     @GetMapping("agendar-laboratorio")
