@@ -8,7 +8,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm")
     const loginBtn = document.querySelector(".btn-login")
-    const usuarioInput = document.getElementById("username") // Corrigido para "username"
+    const usuarioInput = document.getElementById("username")
     const feedback = document.getElementById("feedback")
 
     function showFeedback(message, type = "success") {

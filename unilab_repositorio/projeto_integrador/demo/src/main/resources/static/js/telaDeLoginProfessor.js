@@ -8,7 +8,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm")
     const loginBtn = document.querySelector(".btn-login")
-    const usuarioInput = document.getElementById("usuario")  // Confirme este ID no HTML da tela professor
+    const usuarioInput = document.getElementById("username")  // Confirme este ID no HTML da tela professor
     const feedback = document.getElementById("feedback")
 
     function showFeedback(message, type = "success") {
