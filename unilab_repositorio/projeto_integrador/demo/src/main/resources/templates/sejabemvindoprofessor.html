@@ -122,15 +122,13 @@
         <section class="action-cards">
             <div class="row g-4">
                 <!-- Card Agendar Laboratório -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="action-card slide-in-left" data-action="schedule" tabindex="0" role="button">
-                        <div class="card-icon pulse-element">
-                            <i class="bi bi-calendar-plus"></i>
-                        </div>
-                        <h3>Agendar Laboratório</h3>
-                        <p>Crie um novo agendamento para utilização de laboratório.</p>
+                <a th:href="@{/main/agendar-laboratorio}" class="action-card slide-in-left text-decoration-none text-white" role="button">
+                    <div class="card-icon pulse-element">
+                        <i class="bi bi-calendar-plus"></i>
                     </div>
-                </div>
+                    <h3>Agendar Laboratório</h3>
+                    <p>Crie um novo agendamento para utilização de laboratório.</p>
+                </a>
 
                 <!-- Card Histórico de Agendamentos -->
                 <div class="col-md-6 col-lg-3">

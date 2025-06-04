@@ -63,7 +63,7 @@ public class MainController {
 
     @GetMapping("agendar-laboratorio")
     public String agendarLaboratorio(){
-        return "agendamento_lab";
+        return "cadastraragendamento";
     }
 
     @GetMapping("historico")
