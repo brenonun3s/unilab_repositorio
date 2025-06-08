@@ -73,11 +73,21 @@ public class MainController {
 
     @GetMapping("gerenciar-professor")
     public String gerenciarProfessor(){
-        return "administradorgerenciarprof";
+        return "cadastarprofessor";
     }
 
     @GetMapping("gerenciar-laboratorio")
     public String gerenciarLaboratorio(){
-        return "administradorgerenciarlab";
+        return "cadastrarlaboratorio";
+    }
+
+    @GetMapping("atualizar-professor")
+    public String atualizarProfessor(){
+        return "atualizarprofessor";
+    }
+
+    @GetMapping("atualizar-laboratorio")
+    public String atualizarLaboratorio(){
+        return "atualizarlaboratorio";
     }
 }
