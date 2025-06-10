@@ -71,13 +71,13 @@ public class MainController {
         return "historico";
     }
 
-    @GetMapping("gerenciar-professor")
-    public String gerenciarProfessor(){
+    @GetMapping("cadastrar-professor")
+    public String cadastrarProfessor(){
         return "cadastarprofessor";
     }
 
-    @GetMapping("gerenciar-laboratorio")
-    public String gerenciarLaboratorio(){
+    @GetMapping("cadastrar-laboratorio")
+    public String cadastrarLaboratorio(){
         return "cadastrarlaboratorio";
     }
 
@@ -90,4 +90,17 @@ public class MainController {
     public String atualizarLaboratorio(){
         return "atualizarlaboratorio";
     }
+
+    @GetMapping("gerenciar-laboratorio")
+    public String gerenciarLaboratorio(){
+        return "admgerenciarlab";
+    }
+
+    @GetMapping("gerenciar-professor")
+    public String gerenciarProfessor(){
+        return "admgerenciarprof";
+    }
+
+
+
 }
