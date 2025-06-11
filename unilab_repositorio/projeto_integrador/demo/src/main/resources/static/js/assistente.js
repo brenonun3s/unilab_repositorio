@@ -3,6 +3,29 @@
     Copyright © 2025 Rafael V. Gogge
     Projeto: UniLab - Sistema de Gerenciamento de Laboratórios
 */
+
+document.addEventListener('DOMContentLoaded', () => {
+    const chatIcon = document.querySelector('.chat-icon');
+    const chatPanel = document.querySelector('.chat-panel');
+    const chatClose = document.querySelector('.chat-close');
+
+    if (!chatIcon || !chatPanel || !chatClose) {
+        console.error("Elementos do assistente não encontrados!");
+        return;
+    }
+
+    chatIcon.addEventListener('click', () => {
+        chatPanel.classList.toggle('open');
+    });
+
+    chatClose.addEventListener('click', () => {
+        chatPanel.classList.remove('open');
+    });
+
+    inicializarAssistente();
+
+});
+
 // Função para inicializar o assistente
 function inicializarAssistente() {
     // Configura o timer de inatividade
