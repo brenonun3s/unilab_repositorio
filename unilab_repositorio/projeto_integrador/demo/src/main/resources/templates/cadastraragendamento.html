@@ -22,7 +22,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
-        <a class="navbar-brand" th:href="@{/}">
+        <a class="navbar-brand" th:href="@{/main/meus-agendamentos}">
             <img th:src="@{/imagens/LogoUnilab.png}" alt="UniLab Logo" height="40">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -40,29 +40,29 @@
 
     <div class="card">
         <div class="card-body">
-            <form id="agendamentoForm">
+            <form th:action="@{/solicitar-agendamento}" method="post" th:object="${agendamento}" id="agendamentoForm">
                 <div class="mb-3">
                     <label for="numeroLaboratorio" class="form-label">Número do Laboratório</label>
-                    <input type="number" class="form-control" id="numeroLaboratorio" name="numeroLaboratorio" required>
+                    <input type="number" class="form-control" id="numeroLaboratorio" th:field="*{numeroLaboratorio}" name="numeroLaboratorio" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="professor" class="form-label">Professor Responsável</label>
-                    <input type="text" class="form-control" id="professor" name="professor" required>
+                    <input type="text" class="form-control" id="professor" name="professor" th:field="*{professor}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="data" class="form-label">Data do Agendamento</label>
-                    <input type="date" class="form-control" id="data" name="data" required>
+                    <input type="date" class="form-control" id="data" name="data" th:field="*{data}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="horario" class="form-label">Horário</label>
-                    <input type="time" class="form-control" id="horario" name="horario" required>
+                    <input type="time" class="form-control" id="horario" th:field="*{horario}"name="horario" required>
                 </div>
 
                 <div class="d-flex justify-content-between">
-                    <a href="gerenciarLaboratorios.html" class="btn btn-secondary">
+                    <a th:href="@{/main/meus-agendamentos}" class="btn btn-secondary">
                         <i class="bi bi-arrow-left"></i> Voltar
                     </a>
                     <button type="submit" class="btn btn-primary">

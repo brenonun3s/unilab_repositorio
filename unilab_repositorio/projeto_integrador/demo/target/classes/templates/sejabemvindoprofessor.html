@@ -49,7 +49,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/main/agendar-laboratorio}">
+                    <a class="nav-link" th:href="@{/main/meus-agendamentos}">
                         <i class="bi bi-calendar-plus me-1"></i>Agendar
                     </a>
                 </li>
@@ -291,7 +291,7 @@
             const action = card.getAttribute('data-action');
             switch (action) {
                 case 'schedule':
-                    window.location.href = '/main/agendar-laboratorio';
+                    window.location.href = '/main/meus-agendamentos';
                     break;
                 case 'history':
                     window.location.href = '/main/historico';

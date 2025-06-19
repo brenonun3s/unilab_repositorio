@@ -17,16 +17,12 @@ public class AgendamentoController {
     @Autowired
     AgendamentoService agendamentoService;
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/solicitar-agendamento")
-    public ResponseEntity<Agendamento> solicitar(@RequestBody Agendamento agendamento) {
-        try {
-            agendamentoService.solicitarAgendamento(agendamento);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public String solicitarPorFormulario(@ModelAttribute Agendamento agendamento) {
+        agendamentoService.solicitarAgendamento(agendamento);
+        return "redirect:/main/meus-agendamentos";
     }
+
 
     //OK
     @ResponseStatus(HttpStatus.NO_CONTENT)

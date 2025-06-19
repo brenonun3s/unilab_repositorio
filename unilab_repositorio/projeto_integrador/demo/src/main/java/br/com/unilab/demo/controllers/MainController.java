@@ -1,9 +1,11 @@
 package br.com.unilab.demo.controllers;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import br.com.unilab.demo.model.entities.Agendamento;
 
 /**
  * Classe Controller que carregará apenas os templates
@@ -62,7 +64,8 @@ public class MainController {
     }
 
     @GetMapping("agendar-laboratorio")
-    public String agendarLaboratorio(){
+    public String agendarLaboratorio(Model model){
+        model.addAttribute("agendamento", new Agendamento());
         return "cadastraragendamento";
     }
 
@@ -99,6 +102,11 @@ public class MainController {
     @GetMapping("gerenciar-professor")
     public String gerenciarProfessor(){
         return "admgerenciarprof";
+    }
+
+    @GetMapping("meus-agendamentos")
+    public String meusAgendamentos(){
+        return "meusagendamentos";
     }
 
 }

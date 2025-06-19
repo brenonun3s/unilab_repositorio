@@ -45,7 +45,7 @@ public class ProfessorController {
     @GetMapping("/novo-agendamento")
     public String novoAgendamento(Model model) {
         model.addAttribute("agendamento", new Agendamento());
-        return "agendamento_lab";
+        return "meusagendamentos";
     }
 
     //CRUD PROFESSORES ----------

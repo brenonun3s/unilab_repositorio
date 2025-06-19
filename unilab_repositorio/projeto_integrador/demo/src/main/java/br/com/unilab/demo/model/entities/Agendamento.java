@@ -30,15 +30,13 @@ public class Agendamento implements Serializable {
     @Column(name = "data_agendamento")
     private String data;
 
-    @Column
-    private Boolean status;
+    @Column(name = "horario")
+    private String horario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_laboratorio")
-    private Laboratorio laboratorio;
+    @Column(name = "numero_lab")
+    private Integer numeroLaboratorio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_professor")
-    private Professor professor;
+    @Column(name = "professor_resp")
+    private String professor;
 
 }

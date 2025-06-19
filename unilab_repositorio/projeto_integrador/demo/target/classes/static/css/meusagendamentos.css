@@ -1,0 +1,195 @@
+@charset "UTF-8";
+/* 
+    Adaptado por ChatGPT com base no original de Rafael V. Gogge
+    Tela: Meus Agendamentos - UniLab
+*/
+
+:root {
+    --primary-color: #030a8c;
+    --secondary-color: #0511f2;
+    --dark-primary: #020758;
+    --dark-secondary: #030b91;
+    --bg-dark: #0a0f2d;
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --text-color: #f9fbfa;
+    --accent-color: #0D6EFD;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --transition: all 0.3s ease;
+}
+
+/* Reset e Globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--text-color);
+    min-height: 100vh;
+    padding-top: 76px;
+}
+
+/* Navbar */
+.navbar {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+}
+
+.nav-link {
+    color: var(--text-color) !important;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: var(--accent-color) !important;
+}
+
+/* Cabeçalho da Página */
+.page-header {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.page-header h1 {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.page-header h1 i {
+    color: var(--accent-color);
+    margin-right: 0.5rem;
+}
+
+.page-header .lead {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Filtros */
+.filters-section .card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.filters-section .card-body {
+    padding: 1.5rem;
+}
+
+.form-control, .form-select {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.input-group-text {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--accent-color);
+}
+
+/* Botões */
+.btn-primary {
+    background: var(--accent-color);
+    color: var(--text-color);
+    border: none;
+    transition: var(--transition);
+}
+
+.btn-primary:hover {
+    background: #0b5ed7;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Paginação */
+.pagination .page-link {
+    background: var(--card-bg);
+    border: none;
+    color: var(--text-color);
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.page-item.active .page-link {
+    background: var(--accent-color);
+    color: white;
+}
+
+.page-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--accent-color);
+}
+
+/* Footer */
+.footer {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.footer-links a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: var(--accent-color);
+}
+
+/* Toast */
+.toast {
+    background: var(--accent-color);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal (caso for usar futuramente para editar agendamentos) */
+.modal-content {
+    background: var(--bg-dark);
+    color: var(--text-color);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header, .modal-footer {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsivo */
+@media (max-width: 767.98px) {
+    .page-header {
+        padding: 1rem;
+    }
+    .page-header h1 {
+        font-size: 1.75rem;
+    }
+    .page-header .lead {
+        font-size: 1rem;
+    }
+}
