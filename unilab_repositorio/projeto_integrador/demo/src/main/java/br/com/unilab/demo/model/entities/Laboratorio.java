@@ -42,7 +42,7 @@ public class Laboratorio{
     private Integer capacidade;
 
     @Column(name = "status")
-    private Boolean status;
+    private String status;
 
     @Column
     private String ferramentasDisponiveis;

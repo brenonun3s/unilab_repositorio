@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import br.com.unilab.demo.model.entities.Agendamento;
+import br.com.unilab.demo.model.entities.Professor;
+import br.com.unilab.demo.model.entities.Laboratorio;
 
 /**
  * Classe Controller que carregará apenas os templates
@@ -75,12 +77,14 @@ public class MainController {
     }
 
     @GetMapping("cadastrar-professor")
-    public String cadastrarProfessor(){
+    public String cadastrarProfessor(Model model){
+        model.addAttribute("professor", new Professor());
         return "cadastarprofessor";
     }
 
     @GetMapping("cadastrar-laboratorio")
-    public String cadastrarLaboratorio(){
+    public String cadastrarLaboratorio(Model model){
+        model.addAttribute("laboratorio", new Laboratorio());
         return "cadastrarlaboratorio";
     }
 

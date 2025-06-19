@@ -50,9 +50,6 @@ public class ProfessorService {
         if (professorAtualizacao.getNome() != null) {
             professorExistente.setNome(professorAtualizacao.getNome());
         }
-        if (professorAtualizacao.getSenha() != null) {
-            professorExistente.setSenha(professorAtualizacao.getSenha());
-        }
         if (professorAtualizacao.getEmail() != null) {
             professorExistente.setEmail(professorAtualizacao.getEmail());
         }

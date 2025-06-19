@@ -32,15 +32,16 @@ public class Professor {
     @Column(name = "email", nullable = false, length = 155)
     private String email;
 
-    @Column(name = "senha", nullable = false, length = 20)
-    private String senha;
-
     @Column(name = "status", nullable = false)
-    private Boolean status;
+    private String status;
 
     @Column(name = "departamento_professor")
     private String departamento;
 
+    @Column(name = "matricula_professor")
+    private String matricula;
+
+    
 
 }
 

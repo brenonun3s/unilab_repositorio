@@ -1,5 +1,6 @@
 package br.com.unilab.demo.controllers;
 
+import br.com.unilab.demo.model.entities.Agendamento;
 import br.com.unilab.demo.model.entities.Laboratorio;
 import br.com.unilab.demo.model.exceptions.LaboratorioNaoLocalizadoException;
 import br.com.unilab.demo.service.LaboratorioService;
@@ -18,19 +19,13 @@ public class LaboratorioController {
     @Autowired
     LaboratorioService laboratorioService;
 
-    //OK
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/cadastrar-laboratorio")
-    public ResponseEntity<Laboratorio> cadastrarLaboratorio(@RequestBody Laboratorio laboratorio) {
-        try {
-            laboratorioService.criarLaboratorio(laboratorio);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public String solicitarPorFormulario(@ModelAttribute Laboratorio laboratorio) {
+        laboratorioService.criarLaboratorio(laboratorio);
+        return "redirect:/main/gerenciar-laboratorio";
     }
 
-    //OK
+    // OK
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/deletar-laboratorio/{id}")
     public ResponseEntity<Object> deletarLaboratorio(@PathVariable("id") Long id) {
@@ -41,9 +36,10 @@ public class LaboratorioController {
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    //OK
+    // OK
     @PutMapping("/atualizar-laboratorio/{id}")
-    public ResponseEntity<Object> atualizarLaboratorio(@PathVariable("id") Long id, @RequestBody Laboratorio laboratorio) {
+    public ResponseEntity<Object> atualizarLaboratorio(@PathVariable("id") Long id,
+            @RequestBody Laboratorio laboratorio) {
         return laboratorioService.buscarLaboratorio(id)
                 .map(laboratorioExistente -> {
                     laboratorioService.atualizarLaboratorio(laboratorioExistente, laboratorio);
@@ -52,7 +48,7 @@ public class LaboratorioController {
 
     }
 
-    //OK
+    // OK
     @GetMapping("/listar-laboratorios")
     public ResponseEntity<List<Laboratorio>> listarLaboratorios() {
         try {
