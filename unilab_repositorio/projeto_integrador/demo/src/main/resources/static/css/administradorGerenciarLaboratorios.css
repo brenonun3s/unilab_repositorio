@@ -169,12 +169,6 @@ body {
     color: var(--accent-color) !important;
 }
 
-/* Notificação */
-.notification-bell {
-    position: relative;
-    cursor: pointer;
-}
-
 .notification-badge {
     position: absolute;
     top: -5px;

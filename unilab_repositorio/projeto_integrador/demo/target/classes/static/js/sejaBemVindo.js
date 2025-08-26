@@ -128,7 +128,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const actionCards = document.querySelectorAll('.action-card');
     const fadeElements = document.querySelectorAll('.fade-up-element, .slide-in-left, .slide-in-right, .zoom-in-element');
-    const notificationBell = document.querySelector('.notification-bell');
     const notificationModal = document.getElementById('notificationModal');
     const userDropdown = document.getElementById('userDropdown');
     const userNameElement = document.querySelector('.user-name');
@@ -164,11 +163,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Event Listener para o sino de notificações
-    notificationBell.addEventListener('click', function () {
-        this.querySelector('.notification-badge').style.display = 'none';
-        simulateNotifications();
-    });
 
     // Event Listener para logout
     logoutButton.addEventListener('click', function (e) {

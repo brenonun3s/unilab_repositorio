@@ -380,13 +380,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     action: "showInfo",
                     info: "Tipos de permissões no sistema:<br><br>• <b>Administrador</b>: Acesso completo a todas as funcionalidades<br>• <b>Professor</b>: Pode agendar laboratórios, gerenciar seus agendamentos e gerar relatórios<br>• <b>Monitor</b>: Pode visualizar agendamentos e auxiliar nas atividades<br><br>Para solicitar alteração de permissões, entre em contato com a administração.",
                 },
-                {
-                    id: "notificacoes",
-                    icon: "bi-bell",
-                    text: "Notificações",
-                    action: "showInfo",
-                    info: 'Para configurar suas notificações:<br>1. Acesse sua conta<br>2. Clique no ícone de perfil no canto superior direito<br>3. Selecione "Configurações"<br>4. Vá para a aba "Notificações"<br>5. Escolha quais tipos de alertas deseja receber (e-mail, sistema, etc.)<br>6. Defina a frequência das notificações<br>7. Salve suas preferências',
-                },
             ],
         },
     }

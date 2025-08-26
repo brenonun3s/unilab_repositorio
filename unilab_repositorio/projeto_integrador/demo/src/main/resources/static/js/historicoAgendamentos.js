@@ -7,7 +7,6 @@
 // Elementos do DOM
 const filterForm = document.getElementById('filterForm');
 const agendamentosTable = document.getElementById('agendamentosTable');
-const notificationBell = document.querySelector('.notification-bell');
 const notificationModal = document.getElementById('notificationModal');
 const userDropdown = document.getElementById('userDropdown');
 const logoutButton = document.querySelector('.logout-button');
@@ -99,19 +98,3 @@ function simulateNotifications() {
     });
 }
 
-// Função para obter ícone da notificação
-function getNotificationIcon(type) {
-    const iconMap = {
-        info: 'info-circle',
-        warning: 'exclamation-triangle',
-        success: 'check-circle'
-    };
-    return iconMap[type] || 'bell';
-}
-
-// Função de filtro (você pode implementar conforme necessário)
-function handleFilter(event) {
-    event.preventDefault();
-    // lógica de filtragem aqui
-    showFeedback('Filtro aplicado!', 'success');
-}
