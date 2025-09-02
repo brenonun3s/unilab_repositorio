@@ -1,9 +1,9 @@
 package br.com.unilab.demo.service;
 
+import br.com.unilab.demo.exceptions.AgendamentoNaoLocalizadoException;
+import br.com.unilab.demo.exceptions.LaboratorioOcupadoException;
 import br.com.unilab.demo.model.entities.Agendamento;
 import br.com.unilab.demo.model.entities.Professor;
-import br.com.unilab.demo.model.exceptions.AgendamentoNaoLocalizadoException;
-import br.com.unilab.demo.model.exceptions.LaboratorioOcupadoException;
 import br.com.unilab.demo.repositories.AgendamentoRepository;
 import br.com.unilab.demo.repositories.ProfessorRepository;
 import lombok.RequiredArgsConstructor;

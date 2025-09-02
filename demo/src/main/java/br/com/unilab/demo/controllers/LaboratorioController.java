@@ -1,8 +1,8 @@
 package br.com.unilab.demo.controllers;
 
+import br.com.unilab.demo.exceptions.LaboratorioNaoExisteException;
 import br.com.unilab.demo.model.entities.Agendamento;
 import br.com.unilab.demo.model.entities.Laboratorio;
-import br.com.unilab.demo.model.exceptions.LaboratorioNaoLocalizadoException;
 import br.com.unilab.demo.service.LaboratorioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,7 +54,7 @@ public class LaboratorioController {
         try {
             List<Laboratorio> laboratorios = laboratorioService.listarLaboratorios();
             if (laboratorios.isEmpty()) {
-                throw new LaboratorioNaoLocalizadoException("Não possui laboratórios cadastrados!");
+                throw new LaboratorioNaoExisteException("Não possui laboratórios cadastrados!");
             }
             return ResponseEntity.ok(laboratorios);
         } catch (Exception e) {

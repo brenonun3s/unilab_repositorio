@@ -1,7 +1,7 @@
 package br.com.unilab.demo.service;
 
+import br.com.unilab.demo.exceptions.LaboratorioNaoExisteException;
 import br.com.unilab.demo.model.entities.Laboratorio;
-import br.com.unilab.demo.model.exceptions.LaboratorioNaoLocalizadoException;
 import br.com.unilab.demo.repositories.LaboratorioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class LaboratorioService {
     @Transactional
     public void atualizarLaboratorio(Laboratorio laboratorioExistente, Laboratorio laboratorioAtualizacao) {
         if (laboratorioExistente.getId() == null || laboratorioExistente.getNumeroLaboratorio() == null) {
-            throw new LaboratorioNaoLocalizadoException(
+            throw new LaboratorioNaoExisteException(
                     "Para atualizar, é necessário que o Laboratório esteja cadastrado!");
         }
         if (laboratorioAtualizacao.getNumeroLaboratorio() != null) {

@@ -1,7 +1,7 @@
 package br.com.unilab.demo.controllers;
 
+import br.com.unilab.demo.exceptions.AgendamentoNaoLocalizadoException;
 import br.com.unilab.demo.model.entities.Agendamento;
-import br.com.unilab.demo.model.exceptions.AgendamentoNaoLocalizadoException;
 import br.com.unilab.demo.service.AgendamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,7 +53,7 @@ public class AgendamentoController {
         try {
             List<Agendamento> agendamentos = agendamentoService.listarAgendamentos();
             if (agendamentos.isEmpty()) {
-                throw new AgendamentoNaoLocalizadoException("Não possui laboratórios cadastrados!");
+                throw new AgendamentoNaoLocalizadoException ("Não possui laboratórios cadastrados!");
             }
             return ResponseEntity.ok(agendamentos);
         } catch (Exception e) {
