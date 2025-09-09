@@ -39,4 +39,7 @@ public class Agendamento implements Serializable {
     @Column(name = "professor_resp")
     private String professor;
 
+    @Column(name = "usuario")
+    private String usuario;
+    
 }

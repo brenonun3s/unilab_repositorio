@@ -65,35 +65,35 @@ public class MainController {
         return "sejabemvindoprofessor";
     }
 
-    @GetMapping("agendar-laboratorio")
+    @GetMapping("/agendar-laboratorio")
     public String agendarLaboratorio(Model model){
         model.addAttribute("agendamento", new Agendamento());
         return "cadastraragendamento";
     }
 
-    @GetMapping("historico")
+    @GetMapping("/historico")
     public String historico(){
         return "historico";
     }
 
-    @GetMapping("cadastrar-professor")
+    @GetMapping("/cadastrar-professor")
     public String cadastrarProfessor(Model model){
         model.addAttribute("professor", new Professor());
         return "cadastarprofessor";
     }
 
-    @GetMapping("cadastrar-laboratorio")
+    @GetMapping("/cadastrar-laboratorio")
     public String cadastrarLaboratorio(Model model){
         model.addAttribute("laboratorio", new Laboratorio());
         return "cadastrarlaboratorio";
     }
 
-    @GetMapping("atualizar-professor")
+    @GetMapping("/atualizar-professor")
     public String atualizarProfessor(){
         return "atualizarprofessor";
     }
 
-    @GetMapping("atualizar-laboratorio")
+    @GetMapping("/atualizar-laboratorio")
     public String atualizarLaboratorio(){
         return "atualizarlaboratorio";
     }

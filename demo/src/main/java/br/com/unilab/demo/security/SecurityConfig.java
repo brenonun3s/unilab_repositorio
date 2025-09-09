@@ -39,7 +39,6 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/cadastro", "/registrar").permitAll()
-                        .requestMatchers("/api/chat").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form ->

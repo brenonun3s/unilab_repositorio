@@ -4,10 +4,12 @@ import br.com.unilab.demo.exceptions.AgendamentoNaoLocalizadoException;
 import br.com.unilab.demo.model.entities.Agendamento;
 import br.com.unilab.demo.service.AgendamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -17,14 +19,10 @@ public class AgendamentoController {
     @Autowired
     AgendamentoService agendamentoService;
 
-    @PostMapping("/solicitar-agendamento")
-    public String solicitarPorFormulario(@ModelAttribute Agendamento agendamento) {
-        agendamentoService.solicitarAgendamento(agendamento);
-        return "redirect:/main/meus-agendamentos";
-    }
+    @Autowired
+    UsuarioService usuarioService;
 
 
-    //OK
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/deletar-agendamento/{id}")
     public ResponseEntity<Object> deletarAgendamento(@PathVariable("id") Long id) {
@@ -35,7 +33,6 @@ public class AgendamentoController {
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    //OK
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/atualizar-agendamento/{id}")
     public ResponseEntity<Object> atualizarAgendamento(@PathVariable("id") Long id, @RequestBody Agendamento agendamento) {
@@ -57,7 +54,30 @@ public class AgendamentoController {
             }
             return ResponseEntity.ok(agendamentos);
         } catch (Exception e) {
-            throw new RuntimeException("Erro Inesperado! Gentileza contatar o sobre!");
+            throw new RuntimeException("Erro Inesperado! Gentileza contatar o setor de suporte!");
+        }
+    }
+    
+    @PostMapping("/solicitar-agendamento")
+    public String agendar(@ModelAttribute Agendamento agendamento, Authentication authentication, RedirectAttributes redirectAttributes) {
+        String email = authentication.getName();
+        Optional<Usuario> usuario = usuarioService.buscarPorEmail(email);
+
+        if(usuario.isPresent() && usuario.get){
+        	agendamento.setUsuario(usuario);
+        	agendamentoService.solicitarAgendamento(agendamento);
+        	redirectAttributes.addFlashAttribute("mensagem", "Agendamento Salvo com sucesso");            
+        }
+        else {
+            redirectAttributes.addFlashAttribute("mensagem", "Erro ao salvar: usuário não encontrado");
+        }
+        
+        if(usuario.getRole == "professor") {
+        	return "redirect:/unilab/seja-bem-vindo-adm";
+        }
+        else if(usuario.getRole == "admin") {
+        	return "redirect:/unilab/seja-bem-vindo-professor";
+
         }
     }
 }
