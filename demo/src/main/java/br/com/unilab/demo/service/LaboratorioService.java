@@ -1,7 +1,8 @@
 package br.com.unilab.demo.service;
 
 import br.com.unilab.demo.exceptions.LaboratorioNaoExisteException;
-import br.com.unilab.demo.model.entities.Laboratorio;
+import br.com.unilab.demo.model.Agendamento;
+import br.com.unilab.demo.model.Laboratorio;
 import br.com.unilab.demo.repositories.LaboratorioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.Optional;
  * Utiliza {@link LaboratorioRepository} para persistência dos dados.
  *
  * @author Breno Nunes
- * @see br.com.unilab.demo.model.entities.Agendamento
+ * @see Agendamento
  * @since 20/03/2025
  */
 

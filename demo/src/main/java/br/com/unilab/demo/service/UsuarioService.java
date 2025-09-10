@@ -1,20 +1,15 @@
-package com.example.demo.service;
+package br.com.unilab.demo.service;
 
 
-import java.util.Optional;
 
+import br.com.unilab.demo.model.Usuario;
+import br.com.unilab.demo.repositories.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.example.demo.dto.UsuarioDTO;
-import com.example.demo.dto.UsuarioResponse;
-import com.example.demo.model.entity.Usuario;
-import com.example.demo.repository.UsuarioRepository;
-
-import lombok.RequiredArgsConstructor;
 
 
 @Service
@@ -56,8 +51,9 @@ public class UsuarioService {
     }
 
 
-    public Optional<Usuario> buscarPorEmail(String email) {
-        return usuarioRepository.findByEmail(email);
+    public Usuario buscarPorEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado!"));
     }
 
 

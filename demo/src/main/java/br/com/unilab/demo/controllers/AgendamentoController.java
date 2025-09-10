@@ -1,12 +1,14 @@
 package br.com.unilab.demo.controllers;
 
 import br.com.unilab.demo.exceptions.AgendamentoNaoLocalizadoException;
-import br.com.unilab.demo.model.entities.Agendamento;
+import br.com.unilab.demo.model.Agendamento;
+import br.com.unilab.demo.model.Usuario;
 import br.com.unilab.demo.service.AgendamentoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
+import br.com.unilab.demo.service.UsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -14,13 +16,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class AgendamentoController {
 
-    @Autowired
-    AgendamentoService agendamentoService;
 
-    @Autowired
-    UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
+    private final AgendamentoService agendamentoService;
 
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -50,34 +51,29 @@ public class AgendamentoController {
         try {
             List<Agendamento> agendamentos = agendamentoService.listarAgendamentos();
             if (agendamentos.isEmpty()) {
-                throw new AgendamentoNaoLocalizadoException ("Não possui laboratórios cadastrados!");
+                throw new AgendamentoNaoLocalizadoException("Não possui laboratórios cadastrados!");
             }
             return ResponseEntity.ok(agendamentos);
         } catch (Exception e) {
             throw new RuntimeException("Erro Inesperado! Gentileza contatar o setor de suporte!");
         }
     }
-    
-    @PostMapping("/solicitar-agendamento")
+
+    /*@PostMapping("/solicitar-agendamento")
     public String agendar(@ModelAttribute Agendamento agendamento, Authentication authentication, RedirectAttributes redirectAttributes) {
         String email = authentication.getName();
-        Optional<Usuario> usuario = usuarioService.buscarPorEmail(email);
+        Usuario usuario = usuarioService.buscarPorEmail(email);
 
-        if(usuario.isPresent() && usuario.get){
-        	agendamento.setUsuario(usuario);
-        	agendamentoService.solicitarAgendamento(agendamento);
-        	redirectAttributes.addFlashAttribute("mensagem", "Agendamento Salvo com sucesso");            
-        }
-        else {
+            agendamento.setUsuario(usuario);
+            agendamentoService.solicitarAgendamento(agendamento);
+            redirectAttributes.addFlashAttribute("mensagem", "Agendamento Salvo com sucesso");
+        } else {
             redirectAttributes.addFlashAttribute("mensagem", "Erro ao salvar: usuário não encontrado");
         }
-        
-        if(usuario.getRole == "professor") {
-        	return "redirect:/unilab/seja-bem-vindo-adm";
-        }
-        else if(usuario.getRole == "admin") {
-        	return "redirect:/unilab/seja-bem-vindo-professor";
-
-        }
-    }
+        return "redirect:/form-agendamento";
+    }*/
 }
+
+
+
+

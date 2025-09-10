@@ -1,6 +1,5 @@
-package com.example.demo.security;
+package br.com.unilab.demo.security;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -14,7 +13,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         org.springframework.security.core.AuthenticationException exception)
-            throws IOException, ServletException {
+            throws IOException {
         response.sendRedirect("/login?error=true");
     }
 }

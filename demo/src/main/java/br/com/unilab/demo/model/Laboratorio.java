@@ -1,4 +1,4 @@
-package br.com.unilab.demo.model.entities;
+package br.com.unilab.demo.model;
 
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;

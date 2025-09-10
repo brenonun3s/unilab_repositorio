@@ -1,9 +1,7 @@
 package br.com.unilab.demo.repositories;
 
-import br.com.unilab.demo.model.entities.Professor;
+import br.com.unilab.demo.model.Professor;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.UUID;
 
 /**
  * Repositório responsável pelas operações de persistência da entidade {@link ProfessorRepository}.

@@ -1,4 +1,4 @@
-package br.com.unilab.demo.model.entities;
+package br.com.unilab.demo.model;
 
 import jakarta.persistence.*;
 import lombok.*;

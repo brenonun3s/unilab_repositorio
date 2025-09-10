@@ -2,10 +2,8 @@ package br.com.unilab.demo.service;
 
 import br.com.unilab.demo.exceptions.AgendamentoNaoLocalizadoException;
 import br.com.unilab.demo.exceptions.LaboratorioOcupadoException;
-import br.com.unilab.demo.model.entities.Agendamento;
-import br.com.unilab.demo.model.entities.Professor;
+import br.com.unilab.demo.model.Agendamento;
 import br.com.unilab.demo.repositories.AgendamentoRepository;
-import br.com.unilab.demo.repositories.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +17,7 @@ import java.util.Optional;
  * Utiliza {@link AgendamentoRepository} para persistência dos dados.
  *
  * @author Breno Nunes
- * @see br.com.unilab.demo.model.entities.Agendamento
+ * @see Agendamento
  * @since 20/03/2025
  */
 

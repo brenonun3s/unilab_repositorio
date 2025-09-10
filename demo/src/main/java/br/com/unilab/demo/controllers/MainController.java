@@ -5,9 +5,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import br.com.unilab.demo.model.entities.Agendamento;
-import br.com.unilab.demo.model.entities.Professor;
-import br.com.unilab.demo.model.entities.Laboratorio;
+import br.com.unilab.demo.model.Agendamento;
+import br.com.unilab.demo.model.Professor;
+import br.com.unilab.demo.model.Laboratorio;
 
 /**
  * Classe Controller que carregará apenas os templates

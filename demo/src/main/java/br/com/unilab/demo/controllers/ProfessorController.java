@@ -1,18 +1,13 @@
 package br.com.unilab.demo.controllers;
 
-import br.com.unilab.demo.model.entities.Agendamento;
-import br.com.unilab.demo.model.entities.Laboratorio;
-import br.com.unilab.demo.model.entities.Professor;
+import br.com.unilab.demo.model.Agendamento;
+import br.com.unilab.demo.model.Professor;
 import br.com.unilab.demo.service.AgendamentoService;
 import br.com.unilab.demo.service.ProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Classe Controller dos Professores do sistema

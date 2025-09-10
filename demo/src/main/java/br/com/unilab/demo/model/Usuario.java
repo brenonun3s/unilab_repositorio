@@ -1,11 +1,9 @@
-package com.example.demo.model.entity;
+package br.com.unilab.demo.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Table(name = "tb_usuarios")
@@ -30,5 +28,9 @@ public class Usuario {
     private String email;
 
     @Column(name = "roles_usuario", nullable = false)
-    private String role ;
+    private String role;
+
+    // Um usuário pode ter vários agendamentos
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Agendamento> agendamentos;
 }
