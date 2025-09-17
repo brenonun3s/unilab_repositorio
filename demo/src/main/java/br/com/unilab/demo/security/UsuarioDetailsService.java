@@ -1,7 +1,8 @@
-package com.example.demo.security;
+package br.com.unilab.demo.security;
 
-import com.example.demo.model.entity.Usuario;
-import com.example.demo.repository.UsuarioRepository;
+
+import br.com.unilab.demo.model.Usuario;
+import br.com.unilab.demo.repositories.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -45,28 +45,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault()
-        const usuario = usuarioInput.value.trim().toLowerCase()
-        setButtonLoading(loginBtn, true)
-
-        let destino = ""
-
-        if (usuario.includes("admin")) {
-            destino = "/main/seja-bem-vindo-adm"
-        } else {
-            destino = "/main/seja-bem-vindo-professor"
+    document.addEventListener("DOMContentLoaded", () => {
+        // Captura query param de erro do backend
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("error")) {
+            showFeedback("Usuário ou senha incorretos", "danger");
         }
 
-        showFeedback("Login realizado com sucesso!", "success")
+        // Apenas bloqueia o botão no submit
+        loginForm.addEventListener("submit", () => {
+            setButtonLoading(loginBtn, true);
+        });
+    });
 
-        document.querySelector(".login-card").style.animation =
-            "cardExit 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards"
-
-        setTimeout(() => {
-            window.location.href = destino
-        }, 1500)
-    })
 
     // Keyframes dinâmicos (caso ainda não existam)
     if (!document.querySelector("#extraKeyframes")) {

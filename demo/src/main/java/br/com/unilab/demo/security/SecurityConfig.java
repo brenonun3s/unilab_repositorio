@@ -17,13 +17,17 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private static final String[] PUBLIC_RESOURCES = {
+            "/css/**", "/js/**", "/images/**", "/webjars/**", "/h2-console/**"
+    };
+
     private final UserDetailsService userDetailsService;
+    private final CustomAuthenticationFailureHandler failureHandler;
 
-    private final CustomAuthenticationFailureHandler failuredHandler;
-
-    public SecurityConfig(UserDetailsService userDetailsService, CustomAuthenticationFailureHandler failuredHandler) {
+    public SecurityConfig(UserDetailsService userDetailsService,
+                          CustomAuthenticationFailureHandler failureHandler) {
         this.userDetailsService = userDetailsService;
-        this.failuredHandler = failuredHandler;
+        this.failureHandler = failureHandler;
     }
 
     @Bean
@@ -32,22 +36,22 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChainProfessor(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/chat"))
-
+                .securityMatcher("/professor/**")
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/cadastro", "/registrar").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(PUBLIC_RESOURCES).permitAll()
+                        .requestMatchers("/login-professor").permitAll()
+                        .anyRequest().hasRole("PROFESSOR")
                 )
-                .formLogin(form ->
-                        form.loginPage("/login")
-                                .loginProcessingUrl("/login")
-                                .usernameParameter("email")// URL que processa o POST
-                                .defaultSuccessUrl("/gestao-despesas/index", true) // redireciona após login
-                                .failureHandler(failuredHandler)
-                                .permitAll()
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .usernameParameter("email")
+                        .defaultSuccessUrl("/gestao-despesas/index", true)
+                        .failureHandler(failureHandler)
+                        .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -55,10 +59,38 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
+                )
+                .authenticationProvider(authenticationProvider());
 
-                );
+        return http.build();
+    }
 
-        http.authenticationProvider(authenticationProvider());
+    @Bean
+    public SecurityFilterChain securityFilterChainAdm(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/admin/**")
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(PUBLIC_RESOURCES).permitAll()
+                        .requestMatchers("/login-admin", "admin/login").permitAll()
+                        .anyRequest().hasRole("ADMIN")
+                )
+                .formLogin(form -> form
+                        .loginPage("/login-admin")
+                        .loginProcessingUrl("/admin/login")
+                        .usernameParameter("email")
+                        .defaultSuccessUrl("/seja-bem-vindo-adm", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                )
+                .authenticationProvider(authenticationProvider());
 
         return http.build();
     }

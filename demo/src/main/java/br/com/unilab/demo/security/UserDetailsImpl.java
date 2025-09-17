@@ -1,15 +1,16 @@
-package com.example.demo.security;
+package br.com.unilab.demo.security;
 
 import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import br.com.unilab.demo.model.Usuario;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.example.demo.model.entity.Usuario;
+
 
 public class UserDetailsImpl implements UserDetails {
 

@@ -15,8 +15,8 @@ import java.util.UUID;
 public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "nome_usuario", nullable = false)
     private String nome;

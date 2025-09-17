@@ -1,7 +1,6 @@
 package br.com.unilab.demo.service;
 
 
-
 import br.com.unilab.demo.model.Usuario;
 import br.com.unilab.demo.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +17,19 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
-    private static final Logger log = LoggerFactory.getLogger(UsuarioService.class);
 
 
+    //private static final String ROLE_USER = "ROLE_USER";
 
-    private static final String ROLE_USER = "ROLE_USER";
+    public Usuario buscarPorEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado!"));
+    }
 
-    @Transactional
+    //ESTOU COMENTANDO POIS NO MOMENTO, NÃO É NECESSÁRIO CADASTRAR USUÁRIO
+    //MAS DEIXO AQUI PARA FUTURAMENTE, CASO SEJA NECESSÁRIO
+
+    /*@Transactional
     public UsuarioResponse cadastrarUsuario(UsuarioDTO usuarioDTO) {
         if (usuarioRepository.findByEmail(usuarioDTO.email()).isPresent()) {
             throw new IllegalArgumentException("Email já cadastrado!");
@@ -50,11 +55,7 @@ public class UsuarioService {
         return new UsuarioResponse(usuarioExistente.getId(), usuarioExistente.getNome(), usuarioExistente.getEmail());
     }
 
-
-    public Usuario buscarPorEmail(String email) {
-        return usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado!"));
-    }
+     */
 
 
 }

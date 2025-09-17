@@ -74,10 +74,10 @@
         <div id="feedback" class="alert alert-dismissible fade show" style="display: none;" role="alert"></div>
 
         <!-- Formulário de Login -->
-        <form id="loginForm" class="needs-validation animate-form" th:action="@{/main/processar-login}" method="post">
+        <form id="loginForm" class="needs-validation animate-form" th:action="@{/admin/login}" method="post">
           <div class="form-floating mb-3 input-group-animate">
-            <input type="text" class="form-control" id="username" name="username" placeholder="Usuário" required>
-            <label for="username">Usuário</label>
+            <input type="text" class="form-control" id="email" name="email" placeholder="Usuário" required>
+            <label for="email">Usuário</label>
             <div class="input-icon">
               <i class="bi bi-person"></i>
             </div>

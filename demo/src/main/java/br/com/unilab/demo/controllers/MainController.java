@@ -50,11 +50,6 @@ public class MainController {
         return "telaDeLoginProfessor";
     }
 
-    @PostMapping("/processar-login")
-    public String processarLoginAdm(){
-        return "redirect:/main/seja-bem-vindo";
-    }
-
     @GetMapping("/seja-bem-vindo-adm")
     public String sejaBemVindo(){
         return "sejabemvindoadm";
