@@ -36,11 +36,5 @@ public class ProfessorController {
         return "meusagendamentos";
     }
 
-    // CRUD PROFESSORES ----------
-
-    @PostMapping("/cadastrar-professor")
-    public String solicitarPorFormulario(@ModelAttribute Professor professor) {
-        professorService.criarProfessor(professor);
-        return "redirect:/main/gerenciar-professor";
-    }
+    
 }

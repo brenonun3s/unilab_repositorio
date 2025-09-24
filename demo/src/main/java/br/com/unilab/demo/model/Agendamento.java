@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import br.com.unilab.demo.model.Usuario;
 
 
 @Entity

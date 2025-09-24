@@ -17,94 +17,93 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final String[] PUBLIC_RESOURCES = {
-            "/css/**", "/js/**", "/images/**", "/webjars/**", "/h2-console/**"
-    };
+        private static final String[] PUBLIC_RESOURCES = {
+                        "/css/**", "/js/**", "/images/**", "/webjars/**", "/h2-console/**"
+        };
 
-    private final UserDetailsService userDetailsService;
-    private final CustomAuthenticationFailureHandler failureHandler;
+        private final UserDetailsService userDetailsService;
+        private final CustomAuthenticationFailureHandler failureHandler;
+        private final CustomAuthenticationSuccessHandler sucessHandler;
 
-    public SecurityConfig(UserDetailsService userDetailsService,
-                          CustomAuthenticationFailureHandler failureHandler) {
-        this.userDetailsService = userDetailsService;
-        this.failureHandler = failureHandler;
-    }
+        public SecurityConfig(UserDetailsService userDetailsService,
+                        CustomAuthenticationFailureHandler failureHandler, CustomAuthenticationSuccessHandler sucessHandler) {
+                this.userDetailsService = userDetailsService;
+                this.failureHandler = failureHandler;
+                this.sucessHandler = sucessHandler;
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder(10);
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChainProfessor(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/professor/**")
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PUBLIC_RESOURCES).permitAll()
-                        .requestMatchers("/login-professor").permitAll()
-                        .anyRequest().hasRole("PROFESSOR")
-                )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .usernameParameter("email")
-                        .defaultSuccessUrl("/gestao-despesas/index", true)
-                        .failureHandler(failureHandler)
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .permitAll()
-                )
-                .authenticationProvider(authenticationProvider());
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                                .authorizeHttpRequests(auth -> auth
+                                                // Recursos públicos
+                                                .requestMatchers(PUBLIC_RESOURCES).permitAll()
+                                                .requestMatchers("/", "/main", "/main/sobre", "/main/tutoriais",
+                                                                "/main/suporte", "/login-admin", "/login-professor",
+                                                                "/login")
+                                                .permitAll()
 
-        return http.build();
-    }
+                                                // Endpoints ADMIN
+                                                .requestMatchers(
+                                                                "/main/seja-bem-vindo-adm",
+                                                                "/main/cadastrar-professor",
+                                                                "/main/cadastrar-laboratorio",
+                                                                "/main/atualizar-professor",
+                                                                "/main/atualizar-laboratorio",
+                                                                "/main/gerenciar-laboratorio",
+                                                                "/main/gerenciar-professor",
+                                                                "/main/historico",
+                                                                "/cadastrar-laboratorio", "/deletar-laboratorio/**",
+                                                                "/atualizar-laboratorio/**",
+                                                                "/deletar-agendamento/**", "/atualizar-agendamento/**")
+                                                .hasRole("ADMIN")
 
-    @Bean
-    public SecurityFilterChain securityFilterChainAdm(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/admin/**")
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PUBLIC_RESOURCES).permitAll()
-                        .requestMatchers("/login-admin", "admin/login").permitAll()
-                        .anyRequest().hasRole("ADMIN")
-                )
-                .formLogin(form -> form
-                        .loginPage("/login-admin")
-                        .loginProcessingUrl("/admin/login")
-                        .usernameParameter("email")
-                        .defaultSuccessUrl("/seja-bem-vindo-adm", true)
-                        .failureUrl("/login?error=true")
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .permitAll()
-                )
-                .authenticationProvider(authenticationProvider());
+                                                // Endpoints PROFESSOR
+                                                .requestMatchers(
+                                                                "/novo-agendamento", "/main/seja-bem-vindo-professor",
+                                                                "/main/meus-agendamentos", "/main/agendar-laboratorio",
+                                                                "/solicitar-agendamento")
+                                                .hasRole("PROFESSOR")
 
-        return http.build();
-    }
+                                                // Todas as outras requisições precisam de autenticação
+                                                .anyRequest().authenticated())
+                                // Configuração de login
+                                .formLogin(form -> form
+                                                .loginPage("/login")
+                                                .loginProcessingUrl("/login")
+                                                .usernameParameter("email")
+                                                .successHandler(sucessHandler)
+                                                .failureHandler(failureHandler)
+                                                .permitAll())
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
+                                // Configuração de logout
+                                .logout(logout -> logout
+                                                .logoutUrl("/logout")
+                                                .logoutSuccessUrl("/login")
+                                                .invalidateHttpSession(true)
+                                                .deleteCookies("JSESSIONID")
+                                                .permitAll())
+                                .authenticationProvider(authenticationProvider());
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
+                return http.build();
+        }
+
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+                return authConfig.getAuthenticationManager();
+        }
+
+        @Bean
+        public AuthenticationProvider authenticationProvider() {
+                DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+                provider.setUserDetailsService(userDetailsService);
+                provider.setPasswordEncoder(passwordEncoder());
+                return provider;
+        }
 }
